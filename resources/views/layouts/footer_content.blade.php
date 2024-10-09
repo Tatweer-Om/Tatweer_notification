@@ -1,5 +1,5 @@
-<footer class="footer">
-    <div class="container-fluid">
+{{-- <footer class="footer">
+    <div class="container-fluid" d-none>
         <div class="row">
             <div class="col-sm-6">
                 <script>document.write(new Date().getFullYear())</script> © Minia.
@@ -11,4 +11,4 @@
             </div>
         </div>
     </div>
-</footer>
+</footer> --}}

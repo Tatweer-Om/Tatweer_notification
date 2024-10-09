@@ -134,14 +134,14 @@
                                                     </div>
                                                     <div class="col-md-1 checkbox-container me-4">
                                                         <div class="form-check">
-                                                            <label class="form-check-label" for="checkbox1">{{ trans('messages.checkbox_dress') }}</label>
-                                                            <input class="form-check-input permit_array" type="checkbox" value="2" id="checkbox_dress" name="permit_array[]">
+                                                            <label class="form-check-label" for="checkbox1">{{ trans('messages.checkbox_course') }}</label>
+                                                            <input class="form-check-input permit_array" type="checkbox" value="2" id="checkbox_course" name="permit_array[]">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-1 checkbox-container me-4">
                                                         <div class="form-check">
-                                                            <label class="form-check-label" for="checkbox2">{{ trans('messages.checkbox_booking') }}</label>
-                                                            <input class="form-check-input permit_array" type="checkbox" value="3" id="checkbox_booking" name="permit_array[]">
+                                                            <label class="form-check-label" for="checkbox2">{{ trans('messages.checkbox_enrollments') }}</label>
+                                                            <input class="form-check-input permit_array" type="checkbox" value="3" id="checkbox_enrollments" name="permit_array[]">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-1 checkbox-container me-4 ">
@@ -164,8 +164,8 @@
                                                     </div>
                                                     <div class="col-md-1 checkbox-container me-4">
                                                         <div class="form-check">
-                                                            <label class="form-check-label" for="checkbox5">{{ trans('messages.maint_lang') }}</label>
-                                                            <input class="form-check-input permit_array" type="checkbox" value="7" id="checkbox_maint" name="permit_array[]">
+                                                            <label class="form-check-label" for="checkbox5">{{ trans('messages.teacher') }}</label>
+                                                            <input class="form-check-input permit_array" type="checkbox" value="7" id="teacher" name="permit_array[]">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-1 checkbox-container me-4">
@@ -182,8 +182,14 @@
                                                     </div>
                                                     <div class="col-md-1 checkbox-container me-4">
                                                         <div class="form-check">
-                                                            <label class="form-check-label" for="checkbox5">{{ trans('messages.customer_lang') }}</label>
-                                                            <input class="form-check-input permit_array" type="checkbox" value="10" id="checkbox_customer" name="permit_array[]">
+                                                            <label class="form-check-label" for="checkbox5">{{ trans('messages.student') }}</label>
+                                                            <input class="form-check-input permit_array" type="checkbox" value="10" id="student" name="permit_array[]">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-1 checkbox-container me-4">
+                                                        <div class="form-check">
+                                                            <label class="form-check-label" for="checkbox5">{{ trans('messages.offers') }}</label>
+                                                            <input class="form-check-input permit_array" type="checkbox" value="11" id="checkbox_offers" name="permit_array[]">
                                                         </div>
                                                     </div>
 

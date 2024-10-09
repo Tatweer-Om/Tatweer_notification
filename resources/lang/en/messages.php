@@ -1,36 +1,43 @@
 <?php
 return [
 
-    // Brand
-    'add_brand_name_lang' => 'Please provide brand name',
-    'brand_name_lang' => 'Brand Name',
 
-    // Category
-    'add_category_name_lang' => 'Please provide category name',
-    'category_name_lang' => 'Category Name',
+    //reports
+    'reports' => 'Reports',
+    'income_report'=>'Income Report',
+    'date_from' => 'Date From',
+    'from_date' => 'From Date',
+    'date_to' => 'To Date',
+    'to_date' => 'To Date',
+    'last_week' => 'Last Week',
+    'last_month' => 'Last Month',
+    'last_3_months' => 'Last 3 Months',
+    'last_6_months' => 'Last 6 Months',
+    'last_year' => 'Last Year',
+    'submit' => 'Submit',
+    'total_students' => 'Total Students',
+    'total_income' => 'Total Income',
+    'total_expense' => 'Total Expense',
+    'total_profit' => 'Total Profit',
 
-    // Color
-    'add_color_name_lang' => 'Please provide color name',
-    'color_name_lang' => 'Color Name',
 
-    // Size
-    'add_size_name_lang' => 'Please provide size name',
-    'size_name_lang' => 'Size Name',
+    'sr_no' => 'Sr. No.',
+    'duration_month' => 'Month Duration',
+    'teacher' => 'Teacher',
+    'no_data_available' => 'No data available for the selected period',
 
-    // Dress
-    'add_dress_name_lang' => 'Please provide dress name',
-    'add_sku_lang' => 'Please provide SKU',
-    'add_price_lang' => 'Please provide Price',
-    'dress_name_lang' => 'Dress Name',
-    'sku_lang' => 'SKU',
-    'price_lang' => 'Price',
-    'condition_lang' => 'Condition',
-    'more_images_lang' => 'Add More Images',
-    'new_lang' => 'New',
-    'used_lang' => 'Used',
-    'attributes_lang' => 'Attributes', // Fixed typo from 'atrributes_lang'
-    'attribute_name_lang' => 'Attribute Name',
-    'add_attribute_lang' => 'Add Attributes',
+    'all_courses_income_report' => 'All Courses Income Report',
+    'course_income_report' => 'Course Income Report',
+    'income_report' => 'Income Report',
+
+
+
+    'course_id_lang' => 'Course',
+    'choose_lang' => 'Choose',
+    'start_date' => 'Start Date',
+    'end_date' => 'End Date',
+
+
 
     // General
     'data_safe_lang' => 'Data is safe',
@@ -73,6 +80,8 @@ return [
     'account_name_lang' => 'Account Name',
     'account_branch_lang' => 'Account Branch',
     'account_detail_lang' => 'Account Detail',
+    'detail_lang' => 'Detail',
+
     'opening_balance_lang' => 'Opening Balance',
     'commission_lang' => 'Commission',
     'account_type_lang' => 'Account Type',
@@ -231,31 +240,144 @@ return [
     'company_address_lang' => 'Company Address',
 
     // Data Status Messages
-    'data_saved_success' => 'Data saved successfully',
-    'data_not_saved' => 'Data not saved',
-    'some_error_occured' => 'Some error occurred',
-    'dress_avail_lang' => 'Dress Availability',
-    'about_company' => 'About Company',
-    'setting' => 'Settings',
-    'select_dress_lang' => 'Select Dress',
-    'select_rent_date_lang' => 'Select Rent Date',
-    'select_return_date_lang' => 'Select Return Date',
-    'validation_dress_already_booked_lang' => 'This dress is already booked',
-    'validation_dress_under_maintenance_lang' => 'This dress is under maintenance',
-    'data_get_failed_lang' => 'Failed to retrieve data',
-    'add_phone_for_availability_lang' => 'Add phone number for availability',
-    'add_contact_lang' => 'Add contact',
-    'add_email_lang' => 'Add email',
-    'customer_contact_exist_lang' => 'Customer contact already exists',
-    'validation_amount_cannot_greater_remaining_lang' => 'Amount cannot be greater than remaining balance',
-    'add_paid_amount_lang' => 'Add paid amount',
-    'paid_greater_delete_amount_lang' => 'Paid amount cannot be greater than the amount to be deleted',
-    'payment_add_successfully' => 'Payment added successfully',
-    'payment_add_failed' => 'Failed to add payment',
+  'menu_lang' => 'Menu',
+'menu_dashboard_lang' => 'Dashboard',
+'menu_course_lang' => 'Courses',
+'menu_add_course_lang' => 'Add Course',
+'menu_enrollments_lang' => 'Enrollments',
+'menu_expense_lang' => 'Expenses',
+'expensecat_lang' => 'Expense Categories',
+'account_lang' => 'Accounts',
+'add_expense_lang' => 'Add Expense',
+'menu_user_lang' => 'Users',
+'users_lang' => 'Users',
+'student' => 'Students',
+'add_student' => 'Add Student',
+'sms_panel_lang' => 'SMS Panel',
+'add_sms_lang' => 'Add SMS',
+'teacher_lang' => 'Teachers',
+'menu_setting_lang' => 'Settings',
+'menu_offers_lang' => 'Offers',
+'menu_add_offer_lang' => 'Add Offer',
+'reports' => 'Reports',
+'income_report' => 'Income Report',
+'course_income_report' => 'Course Income Report',
+'all_courses_income_report' => 'All Courses Income Report',
 
-    // maintenance
-    'issue_notes_lang' => 'Issue Notes',
-    'maint_issue_lang' => 'Miantenance Issue',
+
+
+'enroll' => 'Enrollment',
+'enrollment' => 'Enrollment',
+'enrollment_list' => 'Enrollment List',
+'course_id_lang' => 'Course',
+'course_lang' => 'Course',
+'choose_lang' => 'Choose',
+'teacher_profile_lang' => 'Teacher Profile',
+'teachers' => 'Teachers',
+
+'course_profile_lang' => 'Course Profile',
+'courses_lang' => 'Courses',
+'course_id_lang' => 'Course ID - ',
+'teacher_name_lang' => 'Teacher Name',
+'start_date_lang' => 'Start Date',
+'end_date_lang' => 'End Date',
+'start_time_lang' => 'Start Time',
+'end_time_lang' => 'End Time',
+'student_detail_lang' => 'Student Detail',
+'course_detail_lang' => 'Course Detail',
+'price_detail_lang' => 'Price Detail',
+'added_by_lang' => 'Added By',
+'action_lang' => 'Action',
+'course_other_details_lang' => 'Course Other Details',
+'total_enrollments_lang' => 'Total Enrollments',
+'total_income_lang' => 'Total Income',
+'offers_lang' => 'Offers',
+
+
+
+
+
+'total_courses_lang' => 'Total Courses',
+'total_students_lang' => 'Total Students',
+'teachers_other_details_lang' => 'Teacher\'s Other Details',
+
+'teacher_id_lang' => 'Teacher ID',
+'teacher_number_lang' => 'Teacher Number',
+'teacher_email_lang' => 'Teacher Email',
+'civil_number_lang' => 'Civil Number',
+
+
+'dashboard' => 'Dashboard',
+'total_students' => 'Total Students',
+'number_of_teachers' => 'Number of Teachers',
+'total_enrollments' => 'Total Enrollments',
+'total_courses' => 'Total Courses',
+'latest_added_student' => 'Latest Added Student',
+'latest_added_teacher' => 'Latest Added Teacher',
+'latest_enrollment' => 'Latest Enrollment',
+'latest_added_course' => 'Latest Added Course',
+'student_name' => 'Student Name',
+'student_number' => 'Student Number',
+'student_email' => 'Student Email',
+'course_name' => 'Course Name',
+'added_on' => 'Added On',
+'course_price' => 'Course Price',
+'course_dates' => 'Course Dates',
+
+'hours' => 'Hours',
+'start_time' => 'Start Time',
+'end_time' => 'End Time',
+'start_time' => 'Start Time',
+'course_start_date' => 'Course Start Date',
+'course_end_date' => 'Course End Date',
+'original_price' => 'Original Price',
+'discounted_price' => 'Discounted Price',
+'teacher' => 'Instructor',
+'student_id' => 'Student',
+'student_details' => 'Student Details',
+'student_name' => 'Student Name',
+'phone' => 'Phone',
+'email' => 'Email',
+'civil_number' => 'Civil Number',
+'dob_lang' => 'Date of Birth',
+'special_discount_lang' => 'Special Discount',
+'submit_lang' => 'Submit',
+'current_offers_lang' => 'Current Offers',
+'student_detail_lang' => 'Student Detail',
+'course_detail_lang' => 'Course Detail',
+'price_detail_lang' => 'Price Detail',
+'sr_number' => 'Sr#',
+'student_detail' => 'Student Detail',
+'course_detail' => 'Course Detail',
+'price_detail' => 'Price Detail',
+'added_by' => 'Added By',
+'action' => 'Action',
+'add_student_lang' => 'Add Student',
+'close_lang' => 'Close',
+
+'course_id_lang' => 'Course ID',
+'choose_lang' => 'Choose...',
+'student_id_lang' => 'Student ID',
+'special_discount_lang' => 'Special Discount',
+'course_details' => 'Course Details',
+'student_details' => 'Student Details',
+'submit' => 'Submit',
+'current_offers' => 'Current Offers',
+
+
+
+
+    'student_id_lang' => 'Student ID',
+    'student_number_lang' => 'Student Number',
+    'student_email_lang' => 'Student Email',
+    'civil_number_lang' => 'Civil Number',
+    'students_other_details_lang' => 'Student\'s Other Details',
+    'total_courses_lang' => 'Total Courses',
+    'total_income_lang' => 'Total Income',
+    'offers_lang' => 'Offers',
+    'students_lang' => 'Students',
+    'student_profile_lang' => 'Student Profile',
+
 
 ];
 ?>

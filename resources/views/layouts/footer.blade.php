@@ -184,12 +184,23 @@
 <!-- lightbox init -->
 <script src="{{ asset('js/pages/lightbox.init.js') }}"></script>
 
+<!-- choices js -->
+<script src="{{ asset('libs/choices.js/public/assets/scripts/choices.min.js') }}"></script>
+ <!-- color picker js -->
+ <script src="{{ asset('libs/%40simonwep/pickr/pickr.min.js') }}"></script>
+ <script src="{{ asset('libs/%40simonwep/pickr/pickr.es5.min.js') }}"></script>
+
+
 <!-- apexcharts -->
 <script src="{{ asset('libs/apexcharts/apexcharts.min.js') }}"></script>
 
 <!-- Plugins js -->
 <script src="{{ asset('libs/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.min.js') }}"></script>
 <script src="{{ asset('libs/admin-resources/jquery.vectormap/maps/jquery-jvectormap-world-mill-en.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+
+
+
 
 <!-- dashboard init -->
 <script src="{{ asset('js/pages/dashboard.init.js') }}"></script>
@@ -249,6 +260,28 @@
     @include('custom_js.add_dress_js')
 @elseif ($controllerName == 'setting')
     @include('custom_js.setting_js')
+    @elseif ($controllerName == 'student')
+    @include('custom_js.student_js')
+    @elseif ($controllerName == 'teacher')
+    @include('custom_js.teacher_js')
+    @elseif ($controllerName == 'course')
+    @include('custom_js.course_js')
+    @elseif ($controllerName == 'offer')
+    @include('custom_js.offer_js')
+    @elseif ($controllerName == 'enrol')
+    @include('custom_js.enroll_js')
+    @elseif ($controllerName == 'course_profile')
+    @include('custom_js.course_js')
+    @elseif ($controllerName == 'teacher_profile')
+    @include('custom_js.teacher_js')
+    @elseif ($controllerName == 'student_profile')
+    @include('custom_js.student_js')
+    @elseif ($controllerName == 'income_report')
+    @include('custom_js.report_js')
+    @elseif ($controllerName == 'course_income_report')
+    @include('custom_js.report_js')
+    @elseif ($controllerName == 'all_courses_income')
+    @include('custom_js.report_js')
 @endif
 
 

@@ -3,110 +3,29 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SmsController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\SizeController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\BrandController;
-use App\Http\Controllers\ColorController;
 
-use App\Http\Controllers\DressController;
+use App\Http\Controllers\UserController;
+
+use App\Http\Controllers\OfferController;
+use App\Http\Controllers\CourseController;
 use App\Http\Controllers\AccountController;
-use App\Http\Controllers\BookingController;
+
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\SettingController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\TeacherController;
+
+use App\Http\Controllers\EnrolController;
 use App\Http\Controllers\ExpenseCategoryController;
+use App\Http\Controllers\ReportController;
 
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('home', [HomeController::class, 'index'])->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/switch-language/{locale}', [HomeController::class, 'switchLanguage'])->name('switch_language');
 // category dress
-Route::get('category', [CategoryController::class, 'index'])->name('category');
-Route::post('add_category', [CategoryController::class, 'add_category'])->name('add_category');
-Route::get('show_category', [CategoryController::class, 'show_category'])->name('show_category');
-Route::post('edit_category', [CategoryController::class, 'edit_category'])->name('edit_category');
-Route::post('update_category', [CategoryController::class, 'update_category'])->name('update_category');
-Route::post('delete_category', [CategoryController::class, 'delete_category'])->name('delete_category');
-// brand dress
-Route::get('brand', [BrandController::class, 'index'])->name('brand');
-Route::post('add_brand', [BrandController::class, 'add_brand'])->name('add_brand');
-Route::get('show_brand', [BrandController::class, 'show_brand'])->name('show_brand');
-Route::post('edit_brand', [BrandController::class, 'edit_brand'])->name('edit_brand');
-Route::post('update_brand', [BrandController::class, 'update_brand'])->name('update_brand');
-Route::post('delete_brand', [BrandController::class, 'delete_brand'])->name('delete_brand');
 
-// size dress
-Route::get('size', [SizeController::class, 'index'])->name('size');
-Route::post('add_size', [SizeController::class, 'add_size'])->name('add_size');
-Route::get('show_size', [SizeController::class, 'show_size'])->name('show_size');
-Route::post('edit_size', [SizeController::class, 'edit_size'])->name('edit_size');
-Route::post('update_size', [SizeController::class, 'update_size'])->name('update_size');
-Route::post('delete_size', [SizeController::class, 'delete_size'])->name('delete_size');
-
-// color dress
-Route::get('color', [ColorController::class, 'index'])->name('color');
-Route::post('add_color', [ColorController::class, 'add_color'])->name('add_color');
-Route::get('show_color', [ColorController::class, 'show_color'])->name('show_color');
-Route::post('edit_color', [ColorController::class, 'edit_color'])->name('edit_color');
-Route::post('update_color', [ColorController::class, 'update_color'])->name('update_color');
-Route::post('delete_color', [ColorController::class, 'delete_color'])->name('delete_color');
-
-// dress dress
-Route::get('dress', [DressController::class, 'index'])->name('dress');
-Route::post('add_dress', [DressController::class, 'add_dress'])->name('add_dress');
-Route::get('show_dress', [DressController::class, 'show_dress'])->name('show_dress');
-Route::post('edit_dress', [DressController::class, 'edit_dress'])->name('edit_dress');
-Route::post('update_dress', [DressController::class, 'update_dress'])->name('update_dress');
-Route::post('delete_dress', [DressController::class, 'delete_dress'])->name('delete_dress');
-Route::post('remove_attachments', [DressController::class, 'remove_attachments'])->name('remove_attachments');
-Route::post('e_remove_attachments', [DressController::class, 'e_remove_attachments'])->name('e_remove_attachments');
-Route::post('upload_attachments', [DressController::class, 'upload_attachments'])->name('upload_attachments');
-Route::post('maint_dress', [DressController::class, 'maint_dress'])->name('maint_dress');
-Route::get('maint_dress_all', [DressController::class, 'maint_dress_all'])->name('maint_dress_all');
-Route::get('show_maint_dress', [DressController::class, 'show_maint_dress'])->name('show_maint_dress');
-Route::post('maint_dress_comp', [DressController::class, 'maint_dress_comp'])->name('maint_dress_comp');
-Route::get('dress_profile/{id}', [DressController::class, 'dress_profile'])->name('dress_profile');
-Route::post('dress_profile_data', [DressController::class, 'dress_profile_data'])->name('dress_profile_data');
-
-
-// booking
-Route::get('booking', [BookingController::class, 'index'])->name('booking');
-Route::post('get_dress_detail', [BookingController::class, 'get_dress_detail'])->name('get_dress_detail');
-Route::post('add_booking', [BookingController::class, 'add_booking'])->name('add_booking');
-Route::get('view_booking', [BookingController::class, 'view_booking'])->name('view_booking');
-Route::get('show_booking', [BookingController::class, 'show_booking'])->name('show_booking');
-Route::post('search_customer', [BookingController::class, 'search_customer']);
-Route::post('add_booking_customer', [BookingController::class, 'add_booking_customer'])->name('add_booking_customer');
-Route::post('get_payment', [BookingController::class, 'get_payment'])->name('get_payment');
-Route::post('add_payment', [BookingController::class, 'add_payment'])->name('add_payment');
-Route::post('add_dress_availability', [BookingController::class, 'add_dress_availability'])->name('add_dress_availability');
-Route::post('get_booking_detail', [BookingController::class, 'get_booking_detail'])->name('get_booking_detail');
-Route::post('delete_payment', [BookingController::class, 'delete_payment'])->name('delete_payment');
-Route::post('delete_booking', [BookingController::class, 'delete_booking'])->name('delete_booking');
-Route::get('edit_booking/{id}', [BookingController::class, 'edit_booking'])->name('edit_booking');
-Route::post('update_booking', [BookingController::class, 'update_booking'])->name('update_booking');
-Route::post('cancel_booking', [BookingController::class, 'cancel_booking'])->name('cancel_booking');
-Route::post('get_booking_data', [BookingController::class, 'get_booking_data'])->name('get_booking_data');
-Route::post('get_extend_dress_detail', [BookingController::class, 'get_extend_dress_detail'])->name('get_extend_dress_detail');
-Route::post('add_extend_booking', [BookingController::class, 'add_extend_booking'])->name('add_extend_booking');
-Route::post('get_finish_booking_detail', [BookingController::class, 'get_finish_booking_detail'])->name('get_finish_booking_detail');
-Route::post('add_finish_booking', [BookingController::class, 'add_finish_booking'])->name('add_finish_booking');
-Route::get('a4_bill/{id}', [BookingController::class, 'a4_bill'])->name('a4_bill');
-Route::get('receipt_bill/{booking_no}', [BookingController::class, 'receipt_bill'])->name('receipt_bill');
-
-
-
-// customer dress
-Route::get('customer', [CustomerController::class, 'index'])->name('customer');
-Route::post('add_customer', [CustomerController::class, 'add_customer'])->name('add_customer');
-Route::get('show_customer', [CustomerController::class, 'show_customer'])->name('show_customer');
-Route::post('edit_customer', [CustomerController::class, 'edit_customer'])->name('edit_customer');
-Route::post('update_customer', [CustomerController::class, 'update_customer'])->name('update_customer');
-Route::post('delete_customer', [CustomerController::class, 'delete_customer'])->name('delete_customer');
-Route::get('customer_profile/{id}', [CustomerController::class, 'customer_profile'])->name('customer_profile');
-Route::post('customer_profile_data', [CustomerController::class, 'customer_profile_data'])->name('customer_profile_data');
 //user
 Route::match(['get', 'post'], 'login_page', [UserController::class, 'login_page'])->name('login_page');
 Route::match(['get', 'post'], 'login', [UserController::class, 'login'])->name('login');
@@ -159,3 +78,80 @@ Route::post('add_setting', [SettingController::class, 'add_setting'])->name('add
 Route::get('setting_data', [SettingController::class, 'setting_data'])->name('setting_data');
 Route::post('dress_avail', [SettingController::class, 'dress_avail'])->name('dress_avail');
 
+
+
+//STUDENT
+
+Route::match(['get', 'post'], 'student', [StudentController::class, 'index'])->name('student');
+Route::post('add_student', [StudentController::class, 'add_student'])->name('add_student');
+Route::get('show_student', [StudentController::class, 'show_student'])->name('show_student');
+Route::post('edit_student', [StudentController::class, 'edit_student'])->name('edit_student');
+Route::post('update_student', [StudentController::class, 'update_student'])->name('update_student');
+Route::post('delete_student', [StudentController::class, 'delete_student'])->name('delete_student');
+Route::get('student_profile/{id}', [StudentController::class, 'student_profile'])->name('student_profile');
+Route::post('student_profile_data', [StudentController::class, 'student_profile_data'])->name('student_profile_data');
+Route::get('show_student_courses', [StudentController::class, 'show_student_courses'])->name('show_student_courses');
+
+
+
+//teacher
+
+Route::match(['get', 'post'], 'teacher', [TeacherController::class, 'index'])->name('teacher');
+Route::post('add_teacher', [TeacherController::class, 'add_teacher'])->name('add_teacher');
+Route::get('show_teacher', [TeacherController::class, 'show_teacher'])->name('show_teacher');
+Route::post('edit_teacher', [TeacherController::class, 'edit_teacher'])->name('edit_teacher');
+Route::post('update_teacher', [TeacherController::class, 'update_teacher'])->name('update_teacher');
+Route::post('delete_teacher', [TeacherController::class, 'delete_teacher'])->name('delete_teacher');
+Route::post('delete_teacher_course', [TeacherController::class, 'delete_teacher_course'])->name('delete_teacher_course');
+Route::get('teacher_profile/{id}', [TeacherController::class, 'teacher_profile'])->name('teacher_profile');
+Route::get('show_teacher_courses', [TeacherController::class, 'show_teacher_courses'])->name('show_teacher_courses');
+
+
+//course
+
+Route::match(['get', 'post'], 'course', [CourseController::class, 'index'])->name('course');
+Route::post('add_course', [CourseController::class, 'add_course'])->name('add_course');
+Route::get('show_course', [CourseController::class, 'show_course'])->name('show_course');
+Route::post('edit_course', [CourseController::class, 'edit_course'])->name('edit_course');
+Route::post('update_course', [CourseController::class, 'update_course'])->name('update_course');
+Route::post('delete_course', [CourseController::class, 'delete_course'])->name('delete_course');
+Route::get('course_profile/{id}', [CourseController::class, 'course_profile'])->name('course_profile');
+Route::post('course_profile_data', [CourseController::class, 'course_profile_data'])->name('course_profile_data');
+Route::get('show_enroll_student', [CourseController::class, 'show_enroll_student'])->name('show_enroll_student');
+Route::post('delete_new', [CourseController::class, 'delete_new'])->name('delete_new');
+
+
+//offer
+
+Route::match(['get', 'post'], 'offer', [OfferController::class, 'index'])->name('offer');
+Route::post('add_offer', [OfferController::class, 'add_offer'])->name('add_offer');
+Route::get('show_offer', [OfferController::class, 'show_offer'])->name('show_offer');
+Route::post('edit_offer', [OfferController::class, 'edit_offer'])->name('edit_offer');
+Route::post('update_offer', [OfferController::class, 'update_offer'])->name('update_offer');
+Route::post('delete_offer', [OfferController::class, 'delete_offer'])->name('delete_offer');
+Route::get('offer_profile/{id}', [OfferController::class, 'offer_profile'])->name('offer_profile');
+Route::post('offer_profile_data', [OfferController::class, 'offer_profile_data'])->name('offer_profile_data');
+Route::get('/get_course/{id}', [OfferController::class, 'get_course']);
+
+
+//enrollement
+
+Route::match(['get', 'post'], 'enrol', [EnrolController::class, 'index'])->name('enrol');
+Route::match(['get', 'post'], 'student_details/{id}', [EnrolController::class, 'student_details'])->name('student_details');
+Route::match(['get', 'post'], 'course_details/{id}', [EnrolController::class, 'course_details'])->name('course_details');
+Route::match(['get', 'post'], 'all_students/{id}', [EnrolController::class, 'all_students'])->name('all_students');
+Route::match(['get', 'post'], 'current_offers', [EnrolController::class, 'current_offers'])->name('current_offers');
+Route::post('add_enroll', [EnrolController::class, 'add_enroll'])->name('add_enroll');
+Route::get('show_enroll', [EnrolController::class, 'show_enroll'])->name('show_enroll');
+Route::post('edit_enroll', [EnrolController::class, 'edit_enroll'])->name('edit_enroll');
+Route::post('delete_enroll', [EnrolController::class, 'delete_enroll'])->name('delete_enroll');
+Route::post('update_enroll', [EnrolController::class, 'update_enroll'])->name('update_enroll');
+Route::post('add_student2', [EnrolController::class, 'add_student2'])->name('add_student2');
+
+
+
+//Report
+
+Route::match(['get', 'post'], 'income_report', [ReportController::class, 'income_report'])->name('income_report');
+Route::match(['get', 'post'], 'course_income_report', [ReportController::class, 'course_income_report'])->name('course_income_report');
+Route::match(['get', 'post'], 'all_courses_income', [ReportController::class, 'all_courses_income'])->name('all_courses_income');

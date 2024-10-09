@@ -111,15 +111,16 @@ class UserController extends Controller
         $permit = explode(',',$user_data->permit_type);
         $checkboxValues = [
 
-            ['id' => 'dress', 'value' => 2, 'name' => 'messages.checkbox_dress'],
-            ['id' => 'booking', 'value' => 3, 'name'=>'messages.checkbox_booking'],
+            ['id' => 'dress', 'value' => 2, 'name' => 'messages.checkbox_course'],
+            ['id' => 'enrollments', 'value' => 3, 'name'=>'messages.checkbox_enrollments'],
             ['id' => 'reports', 'value' => 4, 'name'=>'messages.checkbox_reports'],
             ['id' => 'expense', 'value' => 5, 'name'=>'messages.checkbox_expense'],
             ['id' => 'user', 'value' => 6, 'name'=>'messages.checkbox_user'],
-            ['id' => 'maintenance', 'value' => 7, 'name'=>'messages.maint_lang'],
+            ['id' => 'teacher', 'value' => 7, 'name'=>'messages.teacher'],
             ['id' => 'setting', 'value' => 8, 'name'=>'messages.setting_lang'],
             ['id' => 'sms', 'value' => 9, 'name'=>'messages.sms_lang'],
-            ['id' => 'customer', 'value' => 10, 'name'=>'messages.customer_lang'],
+            ['id' => 'student', 'value' => 10, 'name'=>'messages.student'],
+            ['id' => 'offers', 'value' => 11, 'name'=>'messages.offers_lang'],
 
 
         ];

@@ -62,6 +62,8 @@
     <?php }?>
     <!-- Bootstrap Css -->
 
+     <!-- choices css -->
+        <link href="{{  asset('libs/choices.js/public/assets/styles/choices.min.css')}}" rel="stylesheet" type="text/css" />
 
     <!-- glightbox css -->
     <link rel="stylesheet" href="{{ asset('libs/glightbox/css/glightbox.min.css') }}">
@@ -77,8 +79,11 @@
         <link href="{{ asset('css/app.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
     <?php }?>
 
+
+
     {{-- toastr css --}}
     <link rel="stylesheet" href="{{asset('plugins/toastr/toastr.css')}}">
+
 </head>
 
 <body>
@@ -89,41 +94,48 @@
     <div id="layout-wrapper">
 
 
+        @php
+            $about= DB::table('settings')->first();
+        @endphp
+
         <header id="page-topbar">
             <div class="navbar-header">
                 <div class="d-flex">
                     <!-- LOGO -->
                     <div class="navbar-brand-box">
-                        <a href="index.html" class="logo logo-dark">
+                        <a href="{{ url('/') }}" class="logo logo-dark">
                             <span class="logo-sm">
-                                <img src="{{ asset('images/logo-sm.svg') }}" alt="" height="24">
+                                <img src="{{ asset('images/logo-sm.svg') }}" alt="" height="10">
                             </span>
                             <span class="logo-lg">
-                                <img src="{{ asset('images/logo-sm.svg') }}" alt="" height="24"> <span class="logo-txt">Minia</span>
+                                <img src="{{ $about->logo ? asset('images/logo/' . $about->logo) : asset('images/logo-sm.svg') }}" alt="" height="10">
+                                <span style="font-size: 12px" class="logo-txt">{{ $about->company_name ?? '' }}</span>
                             </span>
                         </a>
 
                         <a href="index.html" class="logo logo-light">
                             <span class="logo-sm">
-                                <img src="{{ asset('images/logo-sm.svg') }}" alt="" height="24">
+                                <img src="{{ asset('images/logo-sm.svg') }}" alt="" height="10">
                             </span>
                             <span class="logo-lg">
-                                <img src="{{ asset('images/logo-sm.svg') }}" alt="" height="24"> <span class="logo-txt">Minia</span>
+                                <img src="{{ $about->logo ? asset('images/logo/' . $about->logo) : asset('images/logo-sm.svg') }}" alt="" height="10">
+                                <span class="logo-txt" style="font-size: 12px">{{ $about->company_name ?? '' }}</span>
                             </span>
                         </a>
                     </div>
+
 
                     <button type="button" class="btn btn-sm px-3 font-size-16 header-item" id="vertical-menu-btn">
                         <i class="fa fa-fw fa-bars"></i>
                     </button>
 
                     <!-- App Search-->
-                    <form class="app-search d-none d-lg-block">
+                    {{-- <form class="app-search d-none d-lg-block">
                         <div class="position-relative">
                             <input type="text" class="form-control" placeholder="Search...">
                             <button class="btn btn-primary" type="button"><i class="bx bx-search-alt align-middle"></i></button>
                         </div>
-                    </form>
+                    </form> --}}
                 </div>
 
                 <div class="d-flex">
@@ -181,7 +193,7 @@
                         </button>
                     </div>
 
-                    <div class="dropdown d-none d-lg-inline-block ms-1">
+                    {{-- <div class="dropdown d-none d-lg-inline-block ms-1">
                         <button type="button" class="btn header-item" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i data-feather="grid" class="icon-lg"></i>
                         </button>
@@ -230,9 +242,9 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
 
-                    <div class="dropdown d-inline-block">
+                    {{-- <div class="dropdown d-inline-block">
                         <button type="button" class="btn header-item noti-icon position-relative" id="page-header-notifications-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i data-feather="bell" class="icon-lg"></i>
                             <span class="badge bg-danger rounded-pill">5</span>
@@ -317,7 +329,7 @@
                                 </a>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
 
                     <div class="dropdown d-inline-block">
                         <button type="button" class="btn header-item right-bar-toggle me-2">
@@ -370,48 +382,52 @@
                                 <span data-key="t-dashboard">{{ trans('messages.menu_dashboard_lang',[],session('locale')) }}</span>
                             </a>
                         </li>
+                        @if(in_array(10, $permissions))
+                        <li>
+                            <a href="javascript: void(0);" class="has-arrow">
+                                <i data-feather="grid"></i>
+                                <span data-key="t-apps">{{ trans('messages.student',[],session('locale')) }}</span>
+                            </a>
+                            <ul class="sub-menu" aria-expanded="false">
+                                <li>
+                                    <a href="{{ url('student') }}">
+                                        <span data-key="t-calendar">{{ trans('messages.add_student',[],session('locale')) }}</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        @endif
+                        @if(in_array(7, $permissions))
+                        <li>
+                            <a href="{{ url('teacher') }}">
+                                <i data-feather="home"></i>
+                                <span data-key="t-dashboard">{{ trans('messages.teacher_lang',[],session('locale')) }}</span>
+                            </a>
+                        </li>
+                        @endif
                         @if(in_array(2, $permissions))
                         <li>
 
                             <a href="javascript: void(0);" class="has-arrow">
                                 <i data-feather="grid"></i>
-                                <span data-key="t-apps">{{ trans('messages.menu_dress_lang',[],session('locale')) }}</span>
+                                <span data-key="t-apps">{{ trans('messages.menu_course_lang',[],session('locale')) }}</span>
                             </a>
                             <ul class="sub-menu" aria-expanded="false">
                                 <li>
-                                    <a href="{{ url('category') }}">
-                                        <span data-key="t-calendar">{{ trans('messages.menu_category_lang',[],session('locale')) }}</span>
+                                    <a href="{{ url('course') }}">
+                                        <span data-key="t-calendar">{{ trans('messages.menu_add_course_lang',[],session('locale')) }}</span>
                                     </a>
                                 </li>
-                                <li>
-                                    <a href="{{ url('brand') }}">
-                                        <span data-key="t-calendar">{{ trans('messages.menu_brand_lang',[],session('locale')) }}</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ url('size') }}">
-                                        <span data-key="t-calendar">{{ trans('messages.menu_size_lang',[],session('locale')) }}</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ url('color') }}">
-                                        <span data-key="t-calendar">{{ trans('messages.menu_color_lang',[],session('locale')) }}</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ url('dress') }}">
-                                        <span data-key="t-calendar">{{ trans('messages.menu_dress_lang',[],session('locale')) }}</span>
-                                    </a>
-                                </li>
+
 
                             </ul>
                         </li>
                         @endif
                         @if(in_array(3, $permissions))
                         <li>
-                            <a href="{{ url('view_booking') }}">
+                            <a href="{{ url('enrol') }}">
                                 <i data-feather="home"></i>
-                                <span data-key="t-dashboard">{{ trans('messages.menu_booking_lang',[],session('locale')) }}</span>
+                                <span data-key="t-dashboard">{{ trans('messages.menu_enrollments_lang',[],session('locale')) }}</span>
                             </a>
                         </li>
                         @endif
@@ -457,21 +473,7 @@
                             </ul>
                         </li>
                         @endif
-                        @if(in_array(10, $permissions))
-                        <li>
-                            <a href="javascript: void(0);" class="has-arrow">
-                                <i data-feather="grid"></i>
-                                <span data-key="t-apps">{{ trans('messages.customer_lang',[],session('locale')) }}</span>
-                            </a>
-                            <ul class="sub-menu" aria-expanded="false">
-                                <li>
-                                    <a href="{{ url('customer') }}">
-                                        <span data-key="t-calendar">{{ trans('messages.add_customer_lang',[],session('locale')) }}</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        @endif
+
                         @if(in_array(9, $permissions))
                         <li>
                             <a href="javascript: void(0);" class="has-arrow">
@@ -487,14 +489,7 @@
                             </ul>
                         </li>
                         @endif
-                        @if(in_array(7, $permissions))
-                        <li>
-                            <a href="{{ url('maint_dress_all') }}">
-                                <i data-feather="home"></i>
-                                <span data-key="t-dashboard">{{ trans('messages.maintenance_lang',[],session('locale')) }}</span>
-                            </a>
-                        </li>
-                        @endif
+
                         @if(in_array(8, $permissions))
                         <li>
                             <a href="{{ url('setting') }}">
@@ -504,7 +499,52 @@
                         </li>
                         @endif
 
+                        @if(in_array(11, $permissions))
+                        <li>
 
+                            <a href="javascript: void(0);" class="has-arrow">
+                                <i data-feather="grid"></i>
+                                <span data-key="t-apps">{{ trans('messages.menu_offers_lang',[],session('locale')) }}</span>
+                            </a>
+                            <ul class="sub-menu" aria-expanded="false">
+                                <li>
+                                    <a href="{{ url('offer') }}">
+                                        <span data-key="t-calendar">{{ trans('messages.menu_add_offer_lang',[],session('locale')) }}</span>
+                                    </a>
+                                </li>
+
+
+                            </ul>
+                        </li>
+                        @endif
+                        @if(in_array(4, $permissions))
+                        <li>
+
+                            <a href="javascript: void(0);" class="has-arrow">
+                                <i data-feather="grid"></i>
+                                <span data-key="t-apps">{{ trans('messages.reports',[],session('locale')) }}</span>
+                            </a>
+                            <ul class="sub-menu" aria-expanded="false">
+                                <li>
+                                    <a href="{{ url('income_report') }}">
+                                        <span data-key="t-calendar">{{ trans('messages.income_report',[],session('locale')) }}</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ url('course_income_report') }}">
+                                        <span data-key="t-calendar">{{ trans('messages.course_income_report',[],session('locale')) }}</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ url('all_courses_income') }}">
+                                        <span data-key="t-calendar">{{ trans('messages.all_courses_income_report',[],session('locale')) }}</span>
+                                    </a>
+                                </li>
+
+
+                            </ul>
+                        </li>
+                        @endif
 
                     </ul>
 
