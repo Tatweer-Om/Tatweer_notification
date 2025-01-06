@@ -10,18 +10,30 @@ class SendReminderEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $student;
-    public $enrollment;
-    public $course;
+    public $service_name;
+    public $purchase_date;
+    public $renewl_date;
+    public $company;
+    public $renewl_cost;
+    public $customer_name;
+    public $logo;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($student, $enrollment, $course)
+    public function __construct($customer_name, $logo, $company, $service_name, $purchase_date, $renewl_cost, $renewl_date)
     {
-        $this->student = $student;
-        $this->enrollment = $enrollment;
-        $this->course = $course;
+        $this->customer_name = $customer_name;
+        $this->company = $company;
+        $this->purchase_date = $purchase_date;
+        $this->service_name = $service_name;
+        $this->renewl_cost = $renewl_cost;
+        $this->renewl_date = $renewl_date;
+        $this->logo = $logo;
+
+
+
+
     }
 
     /**
@@ -29,12 +41,18 @@ class SendReminderEmail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Course Reminder')
+
+        return $this->subject('Subscription Email')
                     ->view('email.email')
                     ->with([
-                        'studentName' => $this->student->student_name,
-                        'courseName' => $this->course->course_name,
-                        'startDate' => $this->course->start_date,
+                        'customer_name' => $this->customer_name,
+                        'service_name' => $this->service_name,
+                        'renewl_date' => $this->renewl_date,
+                        'renewl_cost' => $this->renewl_cost,
+                        'purchase_date'=> $this->purchase_date,
+                        'logo'=> $this->logo,
+                        'company'=>$this->company,
+
                     ]);
     }
 }

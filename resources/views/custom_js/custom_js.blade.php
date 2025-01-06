@@ -2,7 +2,13 @@
     // datepicket
     $(document).ready(function(){
 
-        flatpickr(".datepick",{defaultDate:new Date})
+        flatpickr(".datepick", {
+    defaultDate: function() {
+        const inputValue = this.input.value; // Get the current input value
+        return inputValue ? inputValue : new Date(); // Use the value or fallback to today's date
+    },
+    dateFormat: "Y-m-d", // Adjust the format as needed
+});
 
         $('#logout').on('click', function(e) {
             e.preventDefault();

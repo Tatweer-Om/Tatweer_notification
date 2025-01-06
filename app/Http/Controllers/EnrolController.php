@@ -7,19 +7,24 @@ use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Offer;
 use App\Models\Course;
-use App\Models\Enrollment;
+use App\Models\Service;
+use App\Models\Setting;
 use App\Models\Student;
 use App\Models\Teacher;
+use App\Models\Customer;
+use App\Models\Enrollment;
+use App\Models\ReneHistory;
 use Illuminate\Http\Request;
+use App\Mail\SendReminderEmail;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Mail;
 class EnrolController extends Controller
 {
     public function index()
     {
 
-        $courses = Course::all();
-        $students = Student::all();
+        $services = Service::all();
+        $customers = Customer::all();
 
         if (!Auth::check()) {
 
@@ -30,193 +35,177 @@ class EnrolController extends Controller
 
         if (in_array(3, explode(',', $user->permit_type))) {
 
-            return view('enroll.enroll', compact('courses', 'students'));
+            return view('enroll.enroll', compact('services', 'customers'));
         } else {
 
             return redirect()->route('/')->with('error', trans('messages.you_dont_have_permissions', [], session('locale')));
         }
     }
 
-    public function course_details($id)
+
+
+
+    public function show_subscription(Request $request)
     {
-        $course = Course::where('id', $id)->first();
 
-        $offers = Offer::all();
-        $offer_name = '';
-        $discounted_price = null; // Initialize to null
-
-        foreach ($offers as $offer) {
-            // Check if the current date is between the start_date and end_date of the offer
-            $currentDate = now(); // Get the current date and time
-            $startDate = \Carbon\Carbon::parse($offer->start_date);
-            $endDate = \Carbon\Carbon::parse($offer->end_date);
-
-            if ($currentDate->between($startDate, $endDate) && in_array($course->id, explode(',', $offer->course_id))) {
-                $offer_name = $offer->offer_name; // Get the offer name
-
-                if ($offer->offer_discount) {
-                    $discount_amount = ($course->course_price * $offer->offer_discount) / 100;
-                    $discounted_price = $course->course_price - $discount_amount;
-                }
-                break; // Exit the loop once the first valid offer is found
-            }
-        }
-
-        $teacher = Teacher::where('id', $course->teacher_id)->value('full_name') ?? '';
-
-
-        $add_data = get_date_only($course->created_at);
-        $startDate = new DateTime($course->start_date);
-        $endDate = new DateTime($course->end_date);
-        $interval = $startDate->diff($endDate);
-        $durationMonths = $interval->m + ($interval->y * 12); // Total months
-
-        // Calculate the duration in hours
-        $startTime = new DateTime($course->start_time);
-        $endTime = new DateTime($course->end_time);
-        $intervalTime = $startTime->diff($endTime);
-        $durationHours = $intervalTime->h; // Total hours
-        $durationMinutes = $intervalTime->i; // Total minutes
-
-        if ($course) {
-            return response()->json([
-                'start_date' => $course->start_date,
-                'course_price' => $course->course_price,
-                'end_date' => $course->end_date,
-                'start_time' => $course->start_date,
-                'end_time' => $course->end_date,
-                'duration_months' => $durationMonths,
-                'duration_hours' => $durationHours,
-                'discounted_price' => $discounted_price,
-                'teacher' => $teacher,
-                // Add other course details as needed
-            ]);
-        }
-
-        return response()->json(['error' => 'Course not found'], 404);
-    }
-
-    public function student_details($id)
-    {
-        $student = Student::where('id', $id)->first();
-
-
-
-        if ($student) {
-            return response()->json([
-                'full_name' => $student->full_name,
-                'phone' => $student->student_number,
-                'email' => $student->student_email,
-                'civil_number' => $student->civil_number,
-                'dob' => $student->dob,
-                // Add other student details as needed
-            ]);
-        }
-
-        return response()->json(['error' => 'Student not found'], 404);
-    }
-
-    public function current_offers()
-    {
-        // Get the current date
-        $currentDate = Carbon::now();
-
-        // Fetch offers where the current date is between start_date and end_date
-        $offers = Offer::where('start_date', '<=', $currentDate)
-            ->where('end_date', '>=', $currentDate)
-            ->orderBy('created_at', 'desc')
-            ->take(3)
-            ->get();
-
-        // Initialize an array to hold the offers with course names
-        $offersWithCourses = $offers->map(function ($offer) {
-            // Get course IDs from the offer and explode into an array
-            $courseIds = explode(',', $offer->course_id);
-
-            // Fetch the course names based on the IDs
-            $courses = Course::whereIn('id', $courseIds)->pluck('course_name')->toArray();
-
-            // Add the courses to the offer object
-            $offer->courses = $courses;
-
-            return $offer;
-        });
-
-        // Return the offers with course names as JSON
-        return response()->json($offersWithCourses);
-    }
-
-
-
-    public function show_enroll(Request $request)
-    {
 
         $sno = 0;
-        $courseId = '';
-        $view_course = '';
+        $view_subscription = Enrollment::orderBy('created_at', 'desc')->get();
+        if (count($view_subscription) > 0) {
+            foreach ($view_subscription as $value) {
 
-        $courseId = $request->input('course_id');
-
-        if ($courseId) {
-            $view_course = Enrollment::where('course_id', $courseId)->get();
-        } else {
-            $view_course = Enrollment::all();
-        }
-
-
-        if (count($view_course) > 0) {
-            foreach ($view_course as $value) {
+                $service_ids = $value->service_ids; // Convert string to array
+                $services = Service::where('id', $service_ids)->value('service_name'); // Query services
 
 
 
-                $course = Course::where('id', $value->course_id)->first();
+                $modal = '<a href="' . url('edit_subscription', ['id' => $value->id]) . '" class="btn btn-outline-secondary btn-sm" title="Edit">
+            <i class="fas fa-pencil-alt" title="Edit"></i>
+          </a>
+          <a  class="btn btn-outline-secondary btn-sm" title="Delete" onclick=del("' . $value->id . '")>
+            <i class="fas fa-trash" title="Delete"></i>
+          </a>
+                <a class="btn btn-outline-secondary btn-sm"
+                data-bs-toggle="modal"
+                data-bs-target="#add_renewl_modal"
+                data-value1="' . $services . '"
+                 data-value3="' . $value->renewl_date . '"
+                data-value2="' . $value->renewl_cost . '"
+                data-value4="' . $value->id . '">
 
-                $teacher1 = Teacher::where('id', $course->teacher_id)->first();
-                $teacher = $teacher1->full_name ?? '';
+                    <i class="fas fa-calendar" title="Renew"></i>
+                </a>';
 
 
-                $offers = Offer::all();
-                $offer_name = '';
+                $add_data = \Carbon\Carbon::parse($value->created_at)->format('d-m-Y (h:iA)');
 
+                $customer = Customer::where('id', $value->customer_id)->value('customer_name');
+                $customer_name='<a href="customer_profile/' . $value->customer_id . '">' . $customer . '</a>';
 
-                foreach ($offers as $offer) {
+                $renewal_date = new DateTime($value->renewl_date); // Renewal date from database
+                $current_date = new DateTime(); // Current date
+                $interval = $current_date->diff($renewal_date); // Calculate the difference
 
-                    $offer_name = $offer->offer_name; // Get the offer name
+                // Format the remaining time
+                $remaining_time = '';
+                if ($interval->y > 0) {
+                    $remaining_time .= $interval->y . ' ' . trans('messages.years_lang') . ' ';
                 }
+                if ($interval->m > 0) {
+                    $remaining_time .= $interval->m . ' ' . trans('messages.months_lang') . ' ';
+                }
+                if ($interval->d > 0) {
+                    $remaining_time .= $interval->d . ' ' . trans('messages.days_lang');
+                }
+                $remaining_date = \Carbon\Carbon::parse($value->renewl_date);
+                $now = \Carbon\Carbon::now();
+                $remaining_period = $remaining_date->diff($now);
 
-                $course_name = '<a href="course_profile/' . $value->id . '">' . ($course->course_name) . '</a>';
-
-                $modal = '<a class="btn btn-outline-secondary btn-sm edit" onclick=edit("' . $value->id . '") title="Edit">
-                        <i class="fas fa-pencil-alt" title="Edit"></i>
-                      </a>
-                      <a class="btn btn-outline-secondary btn-sm edit" onclick=del("' . $value->id . '") title="Delete">
-                        <i class="fas fa-trash" title="Delete"></i>
-                      </a>';
-
-                $add_data = get_date_only($value->created_at);
-
-                $student = Student::where('id', $value->student_id)->first();
-                $full_name = $student->full_name ?? '';
-
+                // Check if the remaining period is less than 1 month
+                $badge_class = ($remaining_period->m < 1) ? 'bg-danger' : 'bg-info';
                 $sno++;
                 $json[] = array(
                     $sno,
+                    $customer_name,
+                    $services,
+                    '<span class="badge bg-primary">' . $value->renewl_date . '</span>', // Renewal date
+                    '<span class="badge ' . $badge_class . '">' . $remaining_time . '</span>', // Remaining time
+                    '<span class="added_by">' . trans('messages.added_by') . ': ' . $value->added_by . '</span><br>' . // Added by
+                    '<span class="badge bg-success">' . trans('messages.purchase_date') . ': ' . $value->purchase_date . '</span>', // Purchase date
+                 $add_data ,
+                    $modal // Modal or additional action
+                );
 
-                    '<span class="student_name">' . trans('messages.student_name') . ': ' . $full_name  . '</span><br>' . // Span for student name
-                        '<span class="student_number">' . trans('messages.phone_number') . ': ' . $student->student_number . '</span><br>' . // Span for student number
-                        '<span class="civil_number">' . trans('messages.civil_number') . ': ' . $student->civil_number . '</span>', // Span for civil number
 
-                    '<span class="course_name">' . trans('messages.course_name') . ': ' . $course_name . '</span><br>' . // Span for course name
-                        ($offer_name ? '<span class="offer_name">' . trans('messages.offer_name') . ': ' . $offer_name . '</span><br>' : '') . // Span for offer name if not empty
-                        '<span class="teacher">' . trans('messages.teacher') . ': ' . $teacher . '</span>', // Span for teacher
 
-                    '<span class="discount">' . trans('messages.discount') . ': ' . $value->total_discount . ' %</span><br>' . // Span for discount
-                        '<span class="course_price">' . trans('messages.course_price') . ': ' . $value->course_price . '</span><br>' . // Span for course price
-                        '<span class="discounted_price">' . trans('messages.discounted_price') . ': ' . $value->discounted_price . '</span>', // Span for discounted price
+            }
 
-                    '<span class="added_by">' . trans('messages.added_by') . ': ' . $value->added_by . '</span><br>' . // Span for who added it
-                        '<span class="add_date">' . trans('messages.added_on') . ': ' . $add_data . '</span>', // Span for date added
-                    $modal
+
+
+            $response = array();
+            $response['success'] = true;
+            $response['aaData'] = $json;
+            echo json_encode($response);
+        } else {
+            $response = array();
+            $response['sEcho'] = 0;
+            $response['iTotalRecords'] = 0;
+            $response['iTotalDisplayRecords'] = 0;
+            $response['aaData'] = [];
+            echo json_encode($response);
+        }
+    }
+
+    public function show_subscription_exp(Request $request)
+    {
+
+
+        $sno = 0;
+
+        $view_subscription = Enrollment::whereRaw('DATEDIFF(renewl_date, ?) <= 30', [Carbon::now()])->get();
+                if (count($view_subscription) > 0) {
+            foreach ($view_subscription as $value) {
+
+                $service_ids = $value->service_ids; // Convert string to array
+                $services = Service::where('id', $service_ids)->value('service_name'); // Query services
+
+
+                $modal = '<a href="' . url('edit_subscription', ['id' => $value->id]) . '" class="btn btn-outline-secondary btn-sm" title="Edit">
+                <i class="fas fa-pencil-alt" title="Edit"></i>
+              </a>
+              <a  class="btn btn-outline-secondary btn-sm" title="Delete" onclick=del("' . $value->id . '")>
+                <i class="fas fa-trash" title="Delete"></i>
+              </a>
+                    <a class="btn btn-outline-secondary btn-sm"
+                    data-bs-toggle="modal"
+                    data-bs-target="#add_renewl_modal"
+                    data-value1="' . $services . '"
+                     data-value3="' . $value->renewl_date . '"
+                    data-value2="' . $value->renewl_cost . '"
+                    data-value4="' . $value->id . '">
+
+                        <i class="fas fa-calendar" title="Renew"></i>
+                    </a>';
+
+
+                    $add_data = \Carbon\Carbon::parse($value->created_at)->format('d-m-Y (h:iA)');
+
+                $customer = Customer::where('id', $value->customer_id)->value('customer_name');
+                $customer_name='<a href="customer_profile/' . $value->customer_id . '">' . $customer . '</a>';
+
+
+                $renewal_date = new DateTime($value->renewl_date); // Renewal date from database
+                $current_date = new DateTime(); // Current date
+                $interval = $current_date->diff($renewal_date); // Calculate the difference
+
+                // Format the remaining time
+                $remaining_time = '';
+                if ($interval->y > 0) {
+                    $remaining_time .= $interval->y . ' ' . trans('messages.years_lang') . ' ';
+                }
+                if ($interval->m > 0) {
+                    $remaining_time .= $interval->m . ' ' . trans('messages.months_lang') . ' ';
+                }
+                if ($interval->d > 0) {
+                    $remaining_time .= $interval->d . ' ' . trans('messages.days_lang');
+                }
+                $remaining_date = \Carbon\Carbon::parse($value->renewl_date);
+                $now = \Carbon\Carbon::now();
+                $remaining_period = $remaining_date->diff($now);
+
+                // Check if the remaining period is less than 1 month
+                $badge_class = ($remaining_period->m < 1) ? 'bg-danger' : 'bg-info';
+                $sno++;
+                $json[] = array(
+                    $sno,
+                    $customer_name,
+                    $services,
+                    '<span class="badge bg-primary">' . $value->renewl_date . '</span>', // Renewal date
+                    '<span class="badge ' . $badge_class . '">' . $remaining_time . '</span>', // Remaining time
+                    '<span class="added_by">' . trans('messages.added_by') . ': ' . $value->added_by . '</span><br>' . // Added by
+                    '<span class="badge bg-success">' . trans('messages.purchase_date') . ': ' . $value->purchase_date . '</span>', // Purchase date
+                 $add_data ,
+                    $modal // Modal or additional action
                 );
 
             }
@@ -237,144 +226,199 @@ class EnrolController extends Controller
         }
     }
 
+    public function exp(){
+        return view('enroll.exp');
+    }
 
-    public function add_enroll(Request $request)
+
+    public function add_subscription(Request $request)
     {
 
         $user_id = Auth::id();
         $userData = User::find($user_id);
         $user_name = $userData->user_name;
 
-        $id = $request['course_id'];
-
-        $enroll_count = Enrollment::where('course_id', $id)->count();
-        if ($enroll_count > 15) {
-            return response()->json(['customer_id' => '', 'status' => 4]);
-            exit;
-        }
-
-        $student_data = Student::where('id', $request['student_id'])->first();
-        $student = $student_data->full_name ?? '';
-
-        $existingstudent = Enrollment::where('student_id', $request['student_id'])
-        ->where('course_id', $id)
-        ->first();        if ($existingstudent) {
-
-            return response()->json(['customer_id' => '', 'status' => 3]);
-            exit;
-        }
-        $course_data = Course::where('id', $request['course_id'])->first();
-        $course = $course_data->course_name;
-
-        $course_price = $course_data->course_price;
-        $offer = Offer::whereRaw("FIND_IN_SET(?, course_id)", [$request['course_id']])->first();
-        $offer_discount = $offer ? $offer->offer_discount : 0;
-        $new_discount = $request['discount'];
-        $total_discount = $offer_discount + $new_discount;
-        $discount_amount = ($course_price * $total_discount) / 100;
-        $discounted_price = $course_price - $discount_amount;
+        $services = $request['service_id'];
+        $urls = $request['system_url'];
+        $extraService = $request->has('extra_service') ? true : false;
 
         $enroll = new Enrollment();
 
-        $enroll->course_name = $course;
-        $enroll->course_id = $request['course_id'];
-        $enroll->student_name = $student;
-        $enroll->student_id = $request['student_id'];
-        $enroll->course_price =  $course_price;
-        $enroll->discounted_price = $discounted_price;
-        $enroll->new_discount = $new_discount;
-        $enroll->offer_discount = $offer_discount ?? 0;
-        $enroll->total_discount = $total_discount;
-        $enroll->offer_id = $offer->id ?? '';
-        $enroll->offer_name = $offer->offer_name ?? '';
+        $enroll->service_ids = $services;
+        $enroll->customer_id = $request['customer_id'];
+        $enroll->service_cost = $request['service_cost'];
+
+        $enroll->renewl = $extraService;
+        $enroll->system_urls = implode(',', $urls);
+        $enroll->purchase_date =  $request['purchase_date'];
+        $enroll->renewl = $request['extra_service'];
+        $enroll->renewl_date = $request['renewl_date'];
+        $enroll->renewl_cost = $request['renewl_cost'];
+        $enroll->notes = $request['notes'];
         $enroll->added_by = $user_name;
         $enroll->user_id = $user_id;
         $enroll->save();
 
-        return response()->json(['course_id' => $enroll->id, 'status' => 1]);
+        $history = new ReneHistory();
+        $history->sub_id= $enroll->id;
+        $history->old_renewl_date= $request->input('renewl_date');
+        $history->new_renewl_date= $request->input('new_renewl_date');
+        $history->renewl_cost= $request->input('renewl_cost');
+        $history->notes= $request->input('notes');
+        $history->save();
+
+        $setting= Setting::first();
+        $company= $setting->company_name;
+
+
+        $logoPath= $setting->logo;
+        $phone= $setting->company_phone;
+        $customer = Customer::where('id',$enroll->customer_id)->first();
+        $service = Service::where('id',$enroll->service_ids)->first();
+
+        if ($customer && $service) {
+            $customer_name = $customer->customer_name;
+            $service_name = $service->service_name;
+            $renewl_date = $enroll->renewl_date;
+            $purchase_date = $enroll->purchase_date;
+            $renewl_cost = $enroll->renewl_cost;
+
+            $logo = asset('images/logo/' . $logoPath);
+
+
+            $smsParams = [
+                'sms_status' => 1, // Status for this message type, adjust as needed
+                'customer_name' => $customer_name,
+                'customer_number' => $customer->customer_number,
+                'service_name' => $service_name,
+                'purchase_date' => $purchase_date,
+                'renewl_date' => $renewl_date,
+                'renewl_cost' => $renewl_cost,
+                'company' => $company,
+            ];
+
+            // Get the SMS content
+            $smsContent = get_sms($smsParams);
+
+            // Send the WhatsApp message using sms_module function
+            sms_module($customer->customer_number, $smsContent);
+
+
+            Mail::to($customer->customer_email)->send(new SendReminderEmail($customer_name, $logo,  $service_name, $company, $phone, $renewl_date, $purchase_date, $renewl_cost));
+        }
+        return response()->json(['sub_id' => $enroll->id, 'status' => 1]);
     }
-
-
-    public function edit_enroll(Request $request)
+    public function edit_subscription($id, Request $request)
     {
-        $enroll_id = $request->input('id');
-        $enroll_data = Enrollment::where('id', $enroll_id)->first();
+        $sub_id = $id;
 
-        if (!$enroll_data) {
+        $sub_data = Enrollment::where('id', $sub_id)->first();
+
+        if (!$sub_data) {
             return response()->json(['error' => trans('messages.enroll_not_found', [], session('locale'))], 404);
         }
 
-        $student = Student::where('id', $enroll_data->student_id)->first();
+        $service_ids = $sub_data->service_ids;
+        $system_urls = $sub_data->system_urls ? explode(',', $sub_data->system_urls) : [];
 
-        $data = [
-            'enroll_id' => $enroll_data->id,
-            'course_id' => $enroll_data->course_id,
-            'student_id' => $enroll_data->student_id,
-            'new_discount' => $enroll_data->new_discount,
-        ];
-
-        return response()->json($data);
+        $services = Service::all();
+        $customers = Customer::all();
+        // Pass variables directly to the view
+        return view('enroll.edit_sub', [
+            'sub_id' => $sub_data->id,
+            'sub_data'=>$sub_data,
+            'purchase_date'=>$sub_data->purchase_date,
+            'service_cost'=>$sub_data->service_cost,
+            'customer_id' => $sub_data->customer_id,
+            'service_ids' => $service_ids, // Parsed as an array
+            'system_urls' => $system_urls,
+            'services'=>$services, 'customers'=>$customers, // Parsed as an array
+        ]);
     }
 
 
-    public function update_enroll(Request $request)
+    public function edit_sub($id){
+
+        $services = Service::all();
+        $customers = Customer::all();
+        return view('enroll.edit_sub', compact('services', 'customers'));
+    }
+
+
+
+    public function update_subscription(Request $request)
     {
         // Get the authenticated user's ID and details
         $user_id = Auth::id();
         $userData = User::find($user_id);
         $user_name = $userData->user_name;
 
-        $enroll_id = $request->input('enroll_id');
-
-        $student_data = Student::where('id', $request['student_id'])->first();
-        $student = $student_data->full_name ?? '';
-
-        $course_data = Course::where('id', $request['course_id'])->first();
-        $course = $course_data->course_name;
-
-        $course_price = $course_data->course_price;
-        $offer = Offer::whereRaw("FIND_IN_SET(?, course_id)", [$request['course_id']])->first();
-        $offer_discount = $offer ? $offer->offer_discount : 0;
-        $new_discount = $request['discount'];
-        $total_discount = $offer_discount + $new_discount;
-        $discount_amount = ($course_price * $total_discount) / 100;
-        $discounted_price = $course_price - $discount_amount;
+        $sub_id = $request->input('sub_id');
 
 
-        $enroll = Enrollment::where('id', $enroll_id)->first();
-        $enroll->course_name = $course;
-        $enroll->course_id = $request['course_id'];
-        $enroll->student_name = $student;
-        $enroll->student_id = $request['student_id'];
-        $enroll->course_price =  $course_price;
-        $enroll->discounted_price = $discounted_price;
-        $enroll->new_discount = $new_discount;
-        $enroll->offer_discount = $offer_discount ?? 0;
-        $enroll->total_discount = $total_discount;
-        $enroll->offer_id = $offer->id ?? '';
-        $enroll->offer_name = $offer->offer_name ?? '';
+        $services = $request['service_id'];
+        $urls = $request['system_url'];
+        $extraService = $request->has('extra_service') ? true : false;
+
+        $enroll = Enrollment::where('id', $sub_id)->first();
+
+        $enroll->service_ids =  $services;
+        $enroll->customer_id = $request['customer_id'];
+        $enroll->service_cost = $request['service_cost'];
+
+        $enroll->renewl = $extraService;
+        $enroll->system_urls = implode(',', $urls);
+        $enroll->purchase_date =  $request['purchase_date'];
+        $enroll->renewl = $request['extra_service'];
+        $enroll->renewl_date = $request['renewl_date'];
+        $enroll->renewl_cost = $request['renewl_cost'];
+        $enroll->notes = $request['notes'];
+
         $enroll->added_by = $user_name;
+        $enroll->user_id = $user_id;
         $enroll->save();
         // Return a successful response with the status
-        return response()->json(['enroll_id' => $enroll->id, 'status' => 5]);
+        return response()->json(['enroll_id' => $enroll->id, 'status' => 1]);
     }
 
 
-    public function delete_enroll(Request $request)
+    public function delete_subscription(Request $request)
     {
         $enroll_id = $request->input('id');
         $enroll = Enrollment::where('id', $enroll_id)->first();
         if (!$enroll) {
-            return response()->json(['error' => trans('messages.enroll_not_found', [], session('locale'))], 404);
+            return response()->json(['error' => trans('messages.subscription_not_found', [], session('locale'))], 404);
         }
         $enroll->delete();
         return response()->json([
-            'success' => trans('messages.enroll_deleted_lang', [], session('locale'))
+            'success' => trans('messages.subscription_deleted_lang', [], session('locale'))
         ]);
     }
 
 
-    public function add_student2(Request $request)
+
+
+    public function add_service2(Request $request)
+    {
+
+
+        $user_id = Auth::id();
+        $userData = User::find($user_id);
+        $user_name = $userData->user_name;
+
+        $service = new Service();
+        $service->service_name = $request['service_name'];
+        $service->service_cost = $request['service_cost'];
+        $service->notes = $request['notes'];
+        $service->added_by = $user_name;
+        $service->user_id = $user_id;
+        $service->save();
+
+        return response()->json(['service_id' => $service->id, 'status' => 1]);
+    }
+
+
+    public function add_customer2(Request $request)
     {
 
 
@@ -382,46 +426,95 @@ class EnrolController extends Controller
         $data = User::find($user_id)->first();
         $user = $data->user_name;
 
+        $customer = new Customer();
 
 
-        $existingstudent = Student::where('student_number', $request['student_number'])->first();
-        if ($existingstudent) {
-
-            return response()->json(['student_id' => '', 'status' => 3]);
-            exit;
-        }
-
-        $full_name = $request['first_name'] . ' ' . $request['second_name'] . ' ' . $request['last_name'];
-
-        $student = new Student();
-        $student->first_name = $request['first_name'];
-        $student->second_name = $request['second_name'];
-        $student->last_name = $request['last_name'];
-
-        $student->full_name = $full_name;
-        $student->civil_number = $request['civil_number'];
-        $student->student_number = $request['student_number'];
-        $student->student_email = $request['student_email'];
-        $student->dob = $request['dob'];
-        $student->gender = $request['gender'];
-        $student->notes = $request['notes'];
-        $student->added_by = $user;
-        $student->user_id =  $user_id;
-        $student->save();
-
-        $students = Student::all();
-
-        $select_option = '';
-        foreach ($students as $stud) {
-            $select = '';
-            if (($stud->id == $student->id)) {
-                $select = "selected";
-            }
-
-            $select_option .= '  <option ' . $select . ' value="' . $student->id . '">' . $stud->full_name . '</option>';
-        }
 
 
-        return response()->json(['student_id' => $student->id, 'status' => 1, 'select_option' => $select_option]);
+        $customer->customer_name = $request['customer_name'];
+        $customer->customer_number = $request['customer_number'];
+        $customer->customer_email = $request['customer_email'];
+
+        $customer->address = $request['address'];
+        $customer->added_by = $user;
+        $customer->user_id =  $user_id;
+        $customer->save();
+        // customer add sms
+        // $params = [
+        //     'customer_id' => $customer->id,
+        //     'sms_status' => 1
+        // ];
+        // $sms = get_sms($params);
+        // sms_module($request['customer_phone'], $sms);
+
+        //
+        return response()->json(['customer_id' => $customer->id, 'status' => 1]);
     }
+
+    public function all_sub()
+    {
+        return view('enroll.all_sub');
+    }
+
+    public function sub_detail($id)
+    {
+
+        $sub_data= Enrollment::where('id', $id)->first();
+        $service_ids = explode(',',  $sub_data->service_ids);
+        $services = Service::whereIn('id', $service_ids)->get();
+
+        $customer= Customer::where('id', $sub_data->customer_id)->first();
+
+
+
+        return view('bill.sub_detail', compact('sub_data', 'customer', 'services'));
+    }
+
+
+    public function add_renewl(Request $request){
+
+
+        $id=$request->input('renewl_id');
+        $enroll= Enrollment::where('id', $id)->first();
+
+        $history = new ReneHistory();
+
+        $history->sub_id= $id;
+        $history->old_renewl_date= $request->input('renewl_date');
+        $history->new_renewl_date= $request->input('new_renewl_date');
+        $history->renewl_cost= $request->input('renewl_cost');
+        $history->notes= $request->input('notes');
+        $history->save();
+
+        $enroll->renewl_cost= $request->input('renewl_cost');
+        $enroll->renewl_date= $request->input('new_renewl_date');
+        $enroll->save();
+
+
+        return response()->json([ 'status' => 1]);
+
+
+
+
+    }
+
+    public function getServiceCost($id)
+{
+    $service = Service::where('id', $id)->first();
+
+    if ($service) {
+        return response()->json([
+            'status' => true,
+            'service_cost' => $service->service_cost,
+        ]);
+    }
+
+    return response()->json([
+        'status' => false,
+        'message' => 'Service not found',
+    ]);
+}
+
+
+
 }

@@ -197,7 +197,8 @@
 <!-- Plugins js -->
 <script src="{{ asset('libs/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.min.js') }}"></script>
 <script src="{{ asset('libs/admin-resources/jquery.vectormap/maps/jquery-jvectormap-world-mill-en.js') }}"></script>
-<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+
+
 
 
 
@@ -282,8 +283,20 @@
     @include('custom_js.report_js')
     @elseif ($controllerName == 'all_courses_income')
     @include('custom_js.report_js')
-    @elseif ($controllerName == 'winlos')
-    @include('custom_js.winlos_js')
+    @elseif ($controllerName == 'service')
+    @include('custom_js.service_js')
+    @elseif ($controllerName == 'customer')
+    @include('custom_js.customer_js')
+    @elseif ($controllerName == 'all_sub')
+    @include('custom_js.all_sub_js')
+    @elseif ($controllerName == 'edit_subscription')
+    @include('custom_js.edit_sub_js')
+    @elseif ($controllerName == 'all_sub')
+    @include('custom_js.edit_sub_js')
+    @elseif ($controllerName == 'exp')
+    @include('custom_js.exp_js')
+
+
 @endif
 
 

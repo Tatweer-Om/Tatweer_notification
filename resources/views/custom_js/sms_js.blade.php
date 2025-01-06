@@ -24,26 +24,32 @@
         });
     });
 
-    $(".student_name").click(function () {
-        $(".sms_area").val((index, value) => value + '{student_name}');
+    $(".customer_name").click(function () {
+        $(".sms_area").val((index, value) => value + '{customer_name}');
     });
 
-    $(".student_number").click(function () {
-        $(".sms_area").val((index, value) => value + '{student_number}');
+    $(".customer_number").click(function () {
+        $(".sms_area").val((index, value) => value + '{customer_number}');
     });
 
-    $(".start_time").click(function () {
-        $(".sms_area").val((index, value) => value + '{start_time}');
+    $(".purchase_date").click(function () {
+        $(".sms_area").val((index, value) => value + '{purchase_date}');
     });
-    $(".end_time").click(function () {
-        $(".sms_area").val((index, value) => value + '{end_time}');
+    $(".renewl_date").click(function () {
+        $(".sms_area").val((index, value) => value + '{renewl_date}');
+    });
+    $(".service_name").click(function () {
+        $(".sms_area").val((index, value) => value + '{service_name}');
+    });
+
+    $(".expiry_date").click(function () {
+        $(".sms_area").val((index, value) => value + '{expiry_date}');
     });
     $(".company").click(function () {
         $(".sms_area").val((index, value) => value + '{company}');
     });
-
-    $(".teacher_name").click(function () {
-        $(".sms_area").val((index, value) => value + '{teacher_name}');
+    $(".renewl_cost").click(function () {
+        $(".sms_area").val((index, value) => value + '{renewl_cost}');
     });
 
 

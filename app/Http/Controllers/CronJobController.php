@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Course;
+use App\Models\Service;
 use App\Models\Setting;
 use App\Models\Student;
 use App\Models\Teacher;
+use App\Models\Customer;
 use App\Models\Enrollment;
 use Illuminate\Http\Request;
 use App\Mail\SendReminderEmail;
@@ -16,59 +18,60 @@ class CronJobController extends Controller
 {
     public function getAndSendEmails()
     {
-        // Fetch enrollments where the course start date is tomorrow
-        $enrollments = Enrollment::whereHas('course', function($query) {
-            $query->whereDate('start_date', Carbon::tomorrow());
-        })->get();
+        $enrollments = Enrollment::get();
 
         foreach ($enrollments as $enrollment) {
 
             $setting= Setting::first();
-
             $company= $setting->company_name;
             $phone= $setting->company_phone;
+            $purchase_date= $enrollment->purchase_date;
+            $renewl_date= $enrollment->renewl_date;
+            $renewl_cost= $enrollment->renewl_cost;
+
 
             // Get student details
-            $student = Student::where('id', $enrollment->student_id)->first();
+            $customer = Customer::where('id', $enrollment->Customer_id)->first();
+            $customer_name = $customer->customer_name;
 
-            $course = Course::where('id', $enrollment->course_id)->first(); // Get the course details
-            $teacher= Teacher::where('id', $course->teacher_id)->first();
-            $teacher_name= $teacher->full_name;
-            $start_time = Carbon::parse($course->start_time)->format('g:i A'); // Converts to 12-hour format with AM/PM
-            $end_time = Carbon::parse($course->end_time)->format('g:i A');
+            $service = Service::where('id', $enrollment->service_ids)->first();
+            $service_name= $service->service_name;
 
-            if ($student && $course) {
-                // Send email
-                Mail::to($student->student_email)->send(new SendReminderEmail($student, $enrollment, $course, $company, $teacher_name));
-                 $content = view('email.email', [
-                    'studentName' => $student->first_name,
-                    'courseName' => $course->course_name,
-                    '$enrollment' => $enrollment->craeted_at,
-                    'startDate' => $course->start_date,
-                    'start_time' => $start_time,
-                    'end_time' => $end_time,
-                    'company' => $company,
-                    'teacher_name'=>$teacher_name,
-                    'phone'=>$phone,
 
-                ])->render();
+            if ($customer && $service) {
+                Mail::to($customer->customer_email)->send(new SendReminderEmail($customer_name, $company, $phone, $service_name, $renewl_date, $purchase_date, $renewl_cost));
 
+                if (Carbon::parse($renewl_date)->subMonths(2)->isToday()) {
+                    Mail::to($customer->customer_email)->send(new SendReminderEmail($customer_name, $company, $phone, $service_name, $renewl_date, $purchase_date, $renewl_cost));
+                }
+
+                // Send emails 1 month before the renewal date
+                if (Carbon::parse($renewl_date)->subMonth()->isToday()) {
+                    Mail::to($customer->customer_email)->send(new SendReminderEmail($customer_name, $company, $phone, $service_name, $renewl_date, $purchase_date, $renewl_cost));
+                }
+
+                // Send emails 10 days before the renewal date
+                if (Carbon::parse($renewl_date)->subDays(10)->isToday()) {
+                    Mail::to($customer->customer_email)->send(new SendReminderEmail($customer_name, $company, $phone, $service_name, $renewl_date, $purchase_date, $renewl_cost));
+                }
+
+                // Send emails on the renewal date
+                if (Carbon::parse($renewl_date)->isToday()) {
+                    Mail::to($customer->customer_email)->send(new SendReminderEmail($customer_name, $company, $phone, $service_name, $renewl_date, $purchase_date, $renewl_cost));
+                }
 
                 $params = [
-                    'studentName' => $student->first_name,
-                    'courseName' => $course->course_name,
-                    '$enrollment' => $enrollment->craeted_at,
-                    'startDate' => $course->start_date,
-                    'start_time' => $start_time,
-                    'end_time' => $end_time,
+                    'customer_name' => $customer_name,
+                    'service_name' => $service_name,
+                    '$renewl_date' => $renewl_date,
+                    '$renewl_costs' => $renewl_cost,
+                    'purchase_date' => $purchase_date,
                     'company' => $company,
-                    'teacher_name'=>$teacher_name,
-                    'phone'=>$phone,
-                    'sms_status' => 1
+                    'sms_status' => 2
                 ];
                 $sms = get_sms($params);
-                sms_module($student->student_number, $sms);
-                // Send WhatsApp message (you can use Twilio or other APIs)
+                sms_module($customer->customer_number, $sms);
+
             }
         }
 

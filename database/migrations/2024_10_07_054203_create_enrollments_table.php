@@ -13,17 +13,17 @@ return new class extends Migration
     {
         Schema::create('enrollments', function (Blueprint $table) {
             $table->id();
-            $table->string('course_name')->nullable(); // Customer name
-            $table->string('course_id')->nullable(); // Customer name
-            $table->string('student_name')->nullable(); // Customer name
-            $table->string('student_id')->nullable(); // Customer name
-            $table->string('course_price')->nullable(); // Address (optional)
-            $table->string('offer_id')->nullable(); // Address (optional)
-            $table->string('offer_name')->nullable(); // Address (optional)
-            $table->string('discounted_price')->nullable(); // Address (optional)
-            $table->string('offer_discount')->nullable(); // Address (optional)
-            $table->string('new_discount')->nullable(); // Address (optional)
-            $table->string('total_discount')->nullable(); // Phone number
+            $table->string('service_ids')->nullable(); // Customer name
+            $table->string('customer_id')->nullable(); // Customer name
+            $table->string('purchase_date')->nullable(); // Customer name
+            $table->string('system_urls')->nullable(); // Customer name
+            $table->string('renewl')->nullable(); // Address (optional)
+            $table->string('renewl_date')->nullable(); // Address (optional)
+            $table->string('renewl_cost')->nullable(); // Address (optional)
+            $table->string('service_cost')->nullable(); // Address (optional)
+
+            $table->string('notes')->nullable(); // Address (optional)
+
             $table->integer('user_id')->nullable(); // Foreign key to users table (nullable)
             $table->string('added_by')->nullable(); // User who added the booking
             $table->string('updated_by')->nullable();

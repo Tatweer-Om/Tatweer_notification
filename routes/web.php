@@ -3,22 +3,24 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SmsController;
 use App\Http\Controllers\HomeController;
-
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\EnrolController;
 
 use App\Http\Controllers\OfferController;
+
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CronJobController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StudentController;
-use App\Http\Controllers\TeacherController;
 
-use App\Http\Controllers\EnrolController;
-use App\Http\Controllers\ExpenseCategoryController;
-use App\Http\Controllers\ReportController;
+use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\WinnLosController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\ExpenseCategoryController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -67,6 +69,26 @@ Route::post('edit_account', [AccountController::class, 'edit_account'])->name('e
 Route::post('update_account', [AccountController::class, 'update_account'])->name('update_account');
 Route::post('delete_account', [AccountController::class, 'delete_account'])->name('delete_account');
 
+Route::get('customer', [CustomerController::class, 'index'])->name('customer');
+Route::post('add_customer', [CustomerController::class, 'add_customer'])->name('add_customer');
+Route::post('add_customer2', [CustomerController::class, 'add_customer2'])->name('add_customer2');
+
+Route::get('show_customer', [CustomerController::class, 'show_customer'])->name('show_customer');
+Route::post('edit_customer', [CustomerController::class, 'edit_customer'])->name('edit_customer');
+Route::post('update_customer', [CustomerController::class, 'update_customer'])->name('update_customer');
+Route::get('customer_profile/{id}', [CustomerController::class, 'customer_profile'])->name('customer_profile');
+
+Route::post('delete_customer', [CustomerController::class, 'delete_customer'])->name('delete_customer');
+
+Route::get('service', [ServiceController::class, 'index'])->name('service');
+Route::post('add_service', [ServiceController::class, 'add_service'])->name('add_service');
+Route::post('add_service2', [ServiceController::class, 'add_service2'])->name('add_service2');
+
+Route::get('show_service', [ServiceController::class, 'show_service'])->name('show_service');
+Route::post('edit_service', [ServiceController::class, 'edit_service'])->name('edit_service');
+Route::post('update_service', [ServiceController::class, 'update_service'])->name('update_service');
+Route::post('delete_service', [ServiceController::class, 'delete_service'])->name('delete_service');
+
 
 //sms
 Route::get('sms', [SmsController::class, 'index'])->name('sms');
@@ -82,73 +104,40 @@ Route::post('dress_avail', [SettingController::class, 'dress_avail'])->name('dre
 
 
 
-//STUDENT
-
-Route::match(['get', 'post'], 'student', [StudentController::class, 'index'])->name('student');
-Route::post('add_student', [StudentController::class, 'add_student'])->name('add_student');
-Route::get('show_student', [StudentController::class, 'show_student'])->name('show_student');
-Route::post('edit_student', [StudentController::class, 'edit_student'])->name('edit_student');
-Route::post('update_student', [StudentController::class, 'update_student'])->name('update_student');
-Route::post('delete_student', [StudentController::class, 'delete_student'])->name('delete_student');
-Route::get('student_profile/{id}', [StudentController::class, 'student_profile'])->name('student_profile');
-Route::post('student_profile_data', [StudentController::class, 'student_profile_data'])->name('student_profile_data');
-Route::get('show_student_courses', [StudentController::class, 'show_student_courses'])->name('show_student_courses');
 
 
 
-//teacher
-
-Route::match(['get', 'post'], 'teacher', [TeacherController::class, 'index'])->name('teacher');
-Route::post('add_teacher', [TeacherController::class, 'add_teacher'])->name('add_teacher');
-Route::get('show_teacher', [TeacherController::class, 'show_teacher'])->name('show_teacher');
-Route::post('edit_teacher', [TeacherController::class, 'edit_teacher'])->name('edit_teacher');
-Route::post('update_teacher', [TeacherController::class, 'update_teacher'])->name('update_teacher');
-Route::post('delete_teacher', [TeacherController::class, 'delete_teacher'])->name('delete_teacher');
-Route::post('delete_teacher_course', [TeacherController::class, 'delete_teacher_course'])->name('delete_teacher_course');
-Route::get('teacher_profile/{id}', [TeacherController::class, 'teacher_profile'])->name('teacher_profile');
-Route::get('show_teacher_courses', [TeacherController::class, 'show_teacher_courses'])->name('show_teacher_courses');
 
 
-//course
-
-Route::match(['get', 'post'], 'course', [CourseController::class, 'index'])->name('course');
-Route::post('add_course', [CourseController::class, 'add_course'])->name('add_course');
-Route::get('show_course', [CourseController::class, 'show_course'])->name('show_course');
-Route::post('edit_course', [CourseController::class, 'edit_course'])->name('edit_course');
-Route::post('update_course', [CourseController::class, 'update_course'])->name('update_course');
-Route::post('delete_course', [CourseController::class, 'delete_course'])->name('delete_course');
-Route::get('course_profile/{id}', [CourseController::class, 'course_profile'])->name('course_profile');
-Route::post('course_profile_data', [CourseController::class, 'course_profile_data'])->name('course_profile_data');
-Route::get('show_enroll_student', [CourseController::class, 'show_enroll_student'])->name('show_enroll_student');
-Route::post('delete_new', [CourseController::class, 'delete_new'])->name('delete_new');
-
-
-//offer
-
-Route::match(['get', 'post'], 'offer', [OfferController::class, 'index'])->name('offer');
-Route::post('add_offer', [OfferController::class, 'add_offer'])->name('add_offer');
-Route::get('show_offer', [OfferController::class, 'show_offer'])->name('show_offer');
-Route::post('edit_offer', [OfferController::class, 'edit_offer'])->name('edit_offer');
-Route::post('update_offer', [OfferController::class, 'update_offer'])->name('update_offer');
-Route::post('delete_offer', [OfferController::class, 'delete_offer'])->name('delete_offer');
-Route::get('offer_profile/{id}', [OfferController::class, 'offer_profile'])->name('offer_profile');
-Route::post('offer_profile_data', [OfferController::class, 'offer_profile_data'])->name('offer_profile_data');
-Route::get('/get_course/{id}', [OfferController::class, 'get_course']);
 
 
 //enrollement
 
 Route::match(['get', 'post'], 'enrol', [EnrolController::class, 'index'])->name('enrol');
-Route::match(['get', 'post'], 'student_details/{id}', [EnrolController::class, 'student_details'])->name('student_details');
-Route::match(['get', 'post'], 'course_details/{id}', [EnrolController::class, 'course_details'])->name('course_details');
-Route::match(['get', 'post'], 'all_students/{id}', [EnrolController::class, 'all_students'])->name('all_students');
-Route::match(['get', 'post'], 'current_offers', [EnrolController::class, 'current_offers'])->name('current_offers');
-Route::post('add_enroll', [EnrolController::class, 'add_enroll'])->name('add_enroll');
-Route::get('show_enroll', [EnrolController::class, 'show_enroll'])->name('show_enroll');
-Route::post('edit_enroll', [EnrolController::class, 'edit_enroll'])->name('edit_enroll');
-Route::post('delete_enroll', [EnrolController::class, 'delete_enroll'])->name('delete_enroll');
-Route::post('update_enroll', [EnrolController::class, 'update_enroll'])->name('update_enroll');
-Route::post('add_student2', [EnrolController::class, 'add_student2'])->name('add_student2');
+Route::match(['get', 'post'], 'all_sub', [EnrolController::class, 'all_sub'])->name('all_sub');
+Route::match(['get', 'post'], 'sub_detail/{id}', [EnrolController::class, 'sub_detail'])->name('sub_detail');
+
+
+Route::get('/get-service-cost/{id}', [EnrolController::class, 'getServiceCost'])->name('get.service.cost');
+
+Route::post('add_subscription', [EnrolController::class, 'add_subscription'])->name('add_subscription');
+Route::post('add_subscription', [EnrolController::class, 'add_subscription'])->name('add_subscription');
+
+Route::get('show_subscription', [EnrolController::class, 'show_subscription'])->name('show_subscription');
+Route::get('show_subscription_exp', [EnrolController::class, 'show_subscription_exp'])->name('show_subscription_exp');
+Route::get('exp', [EnrolController::class, 'exp'])->name('exp');
+Route::post('add_renewl', [EnrolController::class, 'add_renewl'])->name('add_renewl');
+
+
+
+Route::get('edit_sub/{id}', [EnrolController::class, 'edit_sub'])->name('edit_sub');
+
+Route::get('edit_subscription/{id}', [EnrolController::class, 'edit_subscription'])->name('edit_subscription');
+Route::post('delete_subscription', [EnrolController::class, 'delete_subscription'])->name('delete_subscription');
+Route::post('update_subscription', [EnrolController::class, 'update_subscription'])->name('update_subscription');
+Route::post('add_service2', [EnrolController::class, 'add_service2'])->name('add_service2');
+Route::post('add_customer2', [EnrolController::class, 'add_customer2'])->name('add_customer2');
+
 
 
 
