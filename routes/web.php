@@ -125,8 +125,10 @@ Route::post('add_subscription', [EnrolController::class, 'add_subscription'])->n
 
 Route::get('show_subscription', [EnrolController::class, 'show_subscription'])->name('show_subscription');
 Route::get('show_subscription_exp', [EnrolController::class, 'show_subscription_exp'])->name('show_subscription_exp');
-Route::get('exp', [EnrolController::class, 'exp'])->name('exp');
-Route::post('add_renewl', [EnrolController::class, 'add_renewl'])->name('add_renewl');
+Route::match(['get', 'post'],'exp', [EnrolController::class, 'exp'])->name('exp');
+Route::match(['get', 'post'],'add_renewl', [EnrolController::class, 'add_renewl'])->name('add_renewl');
+Route::match(['get', 'post'],'add_renewl2', [EnrolController::class, 'add_renewl2'])->name('add_renewl2');
+
 
 
 

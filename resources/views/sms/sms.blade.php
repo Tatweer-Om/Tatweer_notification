@@ -87,6 +87,9 @@
                                 <div class="form-row">
                                     <p style="text-decoration: none;cursor: pointer;" class="text text-success notes">{{ trans('messages.notes_lang', [], session('locale')) }}</p>
                                 </div>
+                                <div class="form-row">
+                                    <p style="text-decoration: none;cursor: pointer;" class="text text-success url">{{ trans('messages.url_lang', [], session('locale')) }}</p>
+                                </div>
 
                                 <div class="form-row">
                                     <p style="text-decoration: none;cursor: pointer;" class="text text-success expiry_date">{{ trans('messages.expiry_date_lang', [], session('locale')) }}</p>

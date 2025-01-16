@@ -319,7 +319,7 @@
                         </li>
 
                         @endif
-                        @if(in_array(5, $permissions))
+                        {{-- @if(in_array(5, $permissions))
                         <li>
                             <a href="javascript: void(0);" class="has-arrow">
                                 <i data-feather="hard-drive"></i>
@@ -345,7 +345,7 @@
 
                             </ul>
                         </li>
-                        @endif
+                        @endif --}}
                         @if(in_array(6, $permissions))
                         <li>
                             <a href="javascript: void(0);" class="has-arrow">

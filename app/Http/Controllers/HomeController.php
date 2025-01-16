@@ -9,48 +9,44 @@ use App\Models\Teacher;
 use App\Models\Enrollment;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Customer;
+use App\Models\Service;
 use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        $latest_courses = Course::latest()->take(10)->get();
-        $latest_students = Student::latest()->take(10)->get();
-        $latest_users = User::latest()->take(10)->get();
-        $latest_teachers = Teacher::latest()->take(10)->get();
+
         $latest_enrollments = Enrollment::latest()->take(10)->get();
-
-        $one_course = Course::latest()->take(1)->get()->value('course_name'); // Get first item instead of collection
-        $one_student = Student::latest()->take(1)->get()->value('full_name');
-        $one_user = User::latest()->take(1)->get()->value('user_name');
-        $one_teacher = Teacher::latest()->take(1)->get()->value('full_name');
-        $one_enrollment = Enrollment::latest()->take(1)->get()->value('student_name');
-
-        $course_count = Course::count();
-        $student_count = Student::count();
+        $latest_services= Service::latest()->take(10)->get();
+        $latest_customers= Customer::latest()->take(10)->get();
 
         $user_count = User::count();
-        $teacher_count = Teacher::count();
-        $enrollment_count = Enrollment::count(); // Removed redundant assignment
+        $customer_count = Customer::count();
+        $enrollment_count = Enrollment::count();
+        $one_customer= Customer::latest()->take(1)->value('customer_name');
+        $one_service= Service::latest()->take(1)->value('service_name');
+        $one_enroll= Enrollment::latest()->take(1)->value('service_ids');
+        $enrollment= Service::where('id',  $one_enroll)->value('service_name');
+        $one_user= User::latest()->take(1)->value('user_name');
+
+
 
         if (Auth::check()) {
             return view('dashboard.index', [
-                'latest_courses' => $latest_courses,
-                'latest_students' => $latest_students,
-                'latest_users' => $latest_users,
-                'latest_teachers' => $latest_teachers,
+                'latest_services' => $latest_services,
+                'latest_customers' => $latest_customers,
                 'latest_enrollments' => $latest_enrollments,
-                'one_course' => $one_course,
-                'one_student' => $one_student,
-                'one_user' => $one_user,
-                'one_teacher' => $one_teacher,
-                'one_enrollment' => $one_enrollment,
-                'course_count' => $course_count,
-                'student_count' => $student_count,
                 'user_count' => $user_count,
-                'teacher_count' => $teacher_count,
+                'customer_count' => $customer_count,
                 'enrollment_count' => $enrollment_count,
+                'one_customer'=>$one_customer,
+                'one_service'=>$one_service,
+                'enrollment'=>$enrollment,
+                'one_user'=>$one_user,
+
+
             ]);
         } else {
             return redirect()->route('login_page')->with('error', 'Logged In First');

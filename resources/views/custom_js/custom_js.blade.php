@@ -2,6 +2,16 @@
     // datepicket
     $(document).ready(function(){
 
+        $('#all_subscription_exp').DataTable({
+            "sAjaxSource": "{{ url('show_subscription_exp') }}",
+            "bFilter": true,
+            "pagingType": "numbers",
+            "ordering": true,
+            "order": [[3, "asc"]],
+        });
+
+
+
         flatpickr(".datepick", {
     defaultDate: function() {
         const inputValue = this.input.value; // Get the current input value
@@ -204,6 +214,10 @@
             reader.readAsDataURL(file); // Read the file as a data URL
         }
     });
+
+
+
+
 
 
 

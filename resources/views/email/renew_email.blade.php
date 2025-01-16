@@ -89,7 +89,7 @@
                             </h2>
                             <h3>Dear {{ $customer_name ?? '' }},</h3>
                             <p>
-                                {{ $company ?? '' }} sincerely appreciates the trust you’ve placed in us. This email is to confirm that we have successfully activated the {{ $service_name ?? '' }} for your business.
+                                {{ $company ?? '' }} sincerely appreciates the trust you’ve placed in us. This email is to confirm that we have successfully renewed the {{ $service_name ?? '' }} for your business.
                             </p>
                             <p>
                                 We are excited to provide you with the best of our services and dedicated technical support, ensuring your business thrives with our solutions.

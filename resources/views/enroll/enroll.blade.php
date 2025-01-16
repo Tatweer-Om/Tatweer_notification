@@ -47,7 +47,7 @@
                                     <div class="row">
 
                                         <div class="col-lg-10 col-md-9 col-sm-8 mb-1">
-                                            <select class="form-control service_id" id="service_id" name="service_id">
+                                            <select class="form-control service_id searchable" id="service_id" name="service_id">
                                                 <option value="">
                                                     {{ trans('messages.choose_lang', [], session('locale')) }}
                                                 </option>
@@ -63,7 +63,7 @@
 
                                         <div class="col-lg-2 col-md-3 col-sm-4 mb-1">
                                             <a type="button" class="btn btn-primary w-100 d-flex justify-content-center align-items-center"
-                                               data-bs-toggle="modal" data-bs-target="#add_service_modal">
+                                               data-bs-toggle="modal" data-bs-target="#add_service_modal2">
                                                 +
                                             </a>
                                         </div>
@@ -151,6 +151,16 @@
                                     </label>
                                     <input type="text" class="form-control class_form service_cost" name="service_cost"
                                         id="service_cost">
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-12 mb-1">
+                                <div class="external-event fc-event text-dark bg-success-subtle" data-class="bg-success">
+                                    <label for="business_name" class="form-label font-size-11">
+                                        <i class="mdi mdi-calendar-check font-size-11 me-1"></i>
+                                        {{ trans('messages.business_name_lang', [], session('locale')) }}
+                                    </label>
+                                    <input type="text" class="form-control class_form business_name" name="business_name"
+                                        id="business_name">
                                 </div>
                             </div>
                             <div class="col-lg-2 col-12 mb-1">
@@ -307,7 +317,7 @@
 </div>
 
 
-    <div class="modal fade" id="add_service_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal fade" id="add_service_modal2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -315,9 +325,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="#" class="add_service" method="POST">
+                    <form action="#" class="add_service2" method="POST">
                         @csrf
-                        <input type="hidden" class="service_id" name="service_id">
                         <div class="row">
 
                             <!-- Service Name -->
@@ -338,7 +347,7 @@
                                         <i class="mdi mdi-cash font-size-11 me-1"></i>
                                         {{ trans('messages.service_cost_lang', [], session('locale')) }}
                                     </label>
-                                    <input class="form-control service_cost" name="service_cost" type="text" id="service_cost">
+                                    <input class="form-control service_cost2" name="service_cost" type="text" id="service_cost">
                                 </div>
                             </div>
 

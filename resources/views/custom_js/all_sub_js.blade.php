@@ -7,7 +7,7 @@
     "bFilter": true,
     "pagingType": "numbers",
     "ordering": true,
-    "order": [[6, "desc"]],
+    "order": [[3, "asc"]],
 });
 
 
