@@ -99,7 +99,7 @@ class ServiceController extends Controller
         $service->user_id = $user_id;
         $service->save();
 
-        return response()->json(['service_id' => $service->id, 'status' => 1]);
+        return response()->json(['service_id' => $service->id, 'service_name'=>$service->service_name, 'status' => 1]);
     }
 
 

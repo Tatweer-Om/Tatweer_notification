@@ -6,7 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class SendReminderEmail extends Mailable
+class renewlemail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -41,7 +41,7 @@ class SendReminderEmail extends Mailable
     public function build()
 {
     return $this->subject('Subscription Email')
-                ->view('email.email')
+                ->view('email.renew_email')
                 ->with([
                     'customer_name' => $this->customer_name,
                     'service_name' => $this->service_name,

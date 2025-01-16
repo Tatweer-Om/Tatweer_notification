@@ -165,6 +165,17 @@
 
                                 </div>
                             </div>
+                            <div class="col-lg-3 col-12 mb-1">
+                                <div class="external-event fc-event text-dark bg-success-subtle" data-class="bg-success">
+                                    <label for="business_name" class="form-label font-size-11">
+                                        <i class="mdi mdi-calendar-check font-size-11 me-1"></i>
+                                        {{ trans('messages.business_name_lang', [], session('locale')) }}
+                                    </label>
+                                    <input type="text" class="form-control class_form business_name" name="business_name" id="business_name"
+                                     value="{{ old('business_name', $business_name ?? '') }}">
+
+                                </div>
+                            </div>
 
                             <div class="col-lg-2 col-12 mb-1">
                                 <div class="external-event fc-event text-dark bg-success-subtle" data-class="bg-success">

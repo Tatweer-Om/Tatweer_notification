@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\renewlemail;
 use DateTime;
 use Carbon\Carbon;
 use App\Models\User;
@@ -78,7 +79,32 @@ class EnrolController extends Controller
 
 
                 $add_data = \Carbon\Carbon::parse($value->created_at)->format('d-m-Y (h:iA)');
+                $createdAt = Carbon::parse($value->created_at);
 
+                // Get the difference
+                $diff = $createdAt->diff(Carbon::now());
+
+                // Initialize an empty array to hold the parts of the time difference
+                $timeParts = [];
+
+                // Add the years, months, and days only if they are greater than 0
+                if ($diff->y > 0) {
+                    $timeParts[] = "{$diff->y} years";
+                }
+                if ($diff->m > 0) {
+                    $timeParts[] = "{$diff->m} months";
+                }
+                if ($diff->d > 0) {
+                    $timeParts[] = "{$diff->d} days";
+                }
+
+                // Combine all non-zero parts into a string
+                $timeDifference = implode(', ', $timeParts);
+
+                // If there are no years, months, or days, you can set a fallback string, e.g., "Just now"
+                if (empty($timeDifference)) {
+                    $timeDifference = '';
+                }
                 $customer = Customer::where('id', $value->customer_id)->value('customer_name');
                 $customer_name='<a href="customer_profile/' . $value->customer_id . '">' . $customer . '</a>';
 
@@ -112,7 +138,7 @@ class EnrolController extends Controller
                     '<span class="badge ' . $badge_class . '">' . $remaining_time . '</span>', // Remaining time
                     '<span class="added_by">' . trans('messages.added_by') . ': ' . $value->added_by . '</span><br>' . // Added by
                     '<span class="badge bg-success">' . trans('messages.purchase_date') . ': ' . $value->purchase_date . '</span>', // Purchase date
-                 $add_data ,
+                    $add_data . '<br>' . '<span class="badge bg-info">' . $timeDifference . ' </span>',
                     $modal // Modal or additional action
                 );
 
@@ -158,7 +184,7 @@ class EnrolController extends Controller
               </a>
                     <a class="btn btn-outline-secondary btn-sm"
                     data-bs-toggle="modal"
-                    data-bs-target="#add_renewl_modal"
+                    data-bs-target="#add_renewl_modal2"
                     data-value1="' . $services . '"
                      data-value3="' . $value->renewl_date . '"
                     data-value2="' . $value->renewl_cost . '"
@@ -169,6 +195,32 @@ class EnrolController extends Controller
 
 
                     $add_data = \Carbon\Carbon::parse($value->created_at)->format('d-m-Y (h:iA)');
+                    $createdAt = Carbon::parse($value->created_at);
+
+                // Get the difference
+                $diff = $createdAt->diff(Carbon::now());
+
+                // Initialize an empty array to hold the parts of the time difference
+                $timeParts = [];
+
+                // Add the years, months, and days only if they are greater than 0
+                if ($diff->y > 0) {
+                    $timeParts[] = "{$diff->y} years";
+                }
+                if ($diff->m > 0) {
+                    $timeParts[] = "{$diff->m} months";
+                }
+                if ($diff->d > 0) {
+                    $timeParts[] = "{$diff->d} days";
+                }
+
+                // Combine all non-zero parts into a string
+                $timeDifference = implode(', ', $timeParts);
+
+                // If there are no years, months, or days, you can set a fallback string, e.g., "Just now"
+                if (empty($timeDifference)) {
+                    $timeDifference = '';
+                }
 
                 $customer = Customer::where('id', $value->customer_id)->value('customer_name');
                 $customer_name='<a href="customer_profile/' . $value->customer_id . '">' . $customer . '</a>';
@@ -202,11 +254,13 @@ class EnrolController extends Controller
                     $services,
                     '<span class="badge bg-primary">' . $value->renewl_date . '</span>', // Renewal date
                     '<span class="badge ' . $badge_class . '">' . $remaining_time . '</span>', // Remaining time
-                    '<span class="added_by">' . trans('messages.added_by') . ': ' . $value->added_by . '</span><br>' . // Added by
+                    '<span class="added_by">' . trans('messages.added_by') . ': ' . e($value->added_by) . '</span><br>' . // Added by
                     '<span class="badge bg-success">' . trans('messages.purchase_date') . ': ' . $value->purchase_date . '</span>', // Purchase date
-                 $add_data ,
+                    $add_data . '<br>' . '<span class="badge bg-info">' . $timeDifference . '</span>',
+
                     $modal // Modal or additional action
                 );
+
 
             }
 
@@ -248,12 +302,14 @@ class EnrolController extends Controller
         $enroll->customer_id = $request['customer_id'];
         $enroll->service_cost = $request['service_cost'];
 
+
         $enroll->renewl = $extraService;
         $enroll->system_urls = implode(',', $urls);
         $enroll->purchase_date =  $request['purchase_date'];
         $enroll->renewl = $request['extra_service'];
         $enroll->renewl_date = $request['renewl_date'];
         $enroll->renewl_cost = $request['renewl_cost'];
+        $enroll->business_name = $request['business_name'];
         $enroll->notes = $request['notes'];
         $enroll->added_by = $user_name;
         $enroll->user_id = $user_id;
@@ -269,7 +325,7 @@ class EnrolController extends Controller
 
         $setting= Setting::first();
         $company= $setting->company_name;
-
+        $url=$urls;
 
         $logoPath= $setting->logo;
         $phone= $setting->company_phone;
@@ -283,7 +339,9 @@ class EnrolController extends Controller
             $purchase_date = $enroll->purchase_date;
             $renewl_cost = $enroll->renewl_cost;
 
-            $logo = asset('images/logo/' . $logoPath);
+
+            $logo = public_path('images/logo/' . $logoPath);
+
 
 
             $smsParams = [
@@ -295,6 +353,8 @@ class EnrolController extends Controller
                 'renewl_date' => $renewl_date,
                 'renewl_cost' => $renewl_cost,
                 'company' => $company,
+                'notes'=> $enroll->notes,
+                'url'=>$url
             ];
 
             // Get the SMS content
@@ -304,8 +364,16 @@ class EnrolController extends Controller
             sms_module($customer->customer_number, $smsContent);
 
 
-            Mail::to($customer->customer_email)->send(new SendReminderEmail($customer_name, $logo,  $service_name, $company, $phone, $renewl_date, $purchase_date, $renewl_cost));
-        }
+            Mail::to($customer->customer_email)->send(new SendReminderEmail(
+                $customer_name,
+                $logo,
+                $company,  // company first
+                $service_name,  // then service name
+                $purchase_date,
+                $renewl_cost,
+                $renewl_date,
+            ));
+                    }
         return response()->json(['sub_id' => $enroll->id, 'status' => 1]);
     }
     public function edit_subscription($id, Request $request)
@@ -328,6 +396,8 @@ class EnrolController extends Controller
             'sub_id' => $sub_data->id,
             'sub_data'=>$sub_data,
             'purchase_date'=>$sub_data->purchase_date,
+            'business_name'=>$sub_data->business_name,
+
             'service_cost'=>$sub_data->service_cost,
             'customer_id' => $sub_data->customer_id,
             'service_ids' => $service_ids, // Parsed as an array
@@ -369,6 +439,8 @@ class EnrolController extends Controller
         $enroll->renewl = $extraService;
         $enroll->system_urls = implode(',', $urls);
         $enroll->purchase_date =  $request['purchase_date'];
+        $enroll->business_name =  $request['business_name'];
+
         $enroll->renewl = $request['extra_service'];
         $enroll->renewl_date = $request['renewl_date'];
         $enroll->renewl_cost = $request['renewl_cost'];
@@ -414,42 +486,39 @@ class EnrolController extends Controller
         $service->user_id = $user_id;
         $service->save();
 
-        return response()->json(['service_id' => $service->id, 'status' => 1]);
-    }
+        return response()->json([
+            'status' => 1,
+            'service' => [
+                'id' => $service->id,
+                'service_name' => $service->service_name,
+            ],
+        ]);    }
 
 
-    public function add_customer2(Request $request)
-    {
+        public function add_customer2(Request $request)
+        {
+            $user_id = Auth::id();
+            $user = Auth::user()->user_name; // Fetch the username of the authenticated user
 
+            $customer = new Customer();
 
-        $user_id = Auth::id();
-        $data = User::find($user_id)->first();
-        $user = $data->user_name;
+            $customer->customer_name = $request['customer_name'];
+            $customer->customer_number = $request['customer_number'];
+            $customer->customer_email = $request['customer_email'];
+            $customer->address = $request['address'];
+            $customer->added_by = $user;
+            $customer->user_id = $user_id;
 
-        $customer = new Customer();
+            $customer->save();
 
+            // Return the customer details along with a success status
+            return response()->json([
+                'customer_id' => $customer->id,
+                'customer_name' => $customer->customer_name,
+                'status' => 1
+            ]);
+        }
 
-
-
-        $customer->customer_name = $request['customer_name'];
-        $customer->customer_number = $request['customer_number'];
-        $customer->customer_email = $request['customer_email'];
-
-        $customer->address = $request['address'];
-        $customer->added_by = $user;
-        $customer->user_id =  $user_id;
-        $customer->save();
-        // customer add sms
-        // $params = [
-        //     'customer_id' => $customer->id,
-        //     'sms_status' => 1
-        // ];
-        // $sms = get_sms($params);
-        // sms_module($request['customer_phone'], $sms);
-
-        //
-        return response()->json(['customer_id' => $customer->id, 'status' => 1]);
-    }
 
     public function all_sub()
     {
@@ -476,6 +545,8 @@ class EnrolController extends Controller
 
         $id=$request->input('renewl_id');
         $enroll= Enrollment::where('id', $id)->first();
+        $url= $enroll->system_urls;
+        $notes= $enroll->notes;
 
         $history = new ReneHistory();
 
@@ -490,6 +561,132 @@ class EnrolController extends Controller
         $enroll->renewl_date= $request->input('new_renewl_date');
         $enroll->save();
 
+
+
+        $setting= Setting::first();
+        $company= $setting->company_name;
+
+
+        $logoPath= $setting->logo;
+        $phone= $setting->company_phone;
+        $customer = Customer::where('id',$enroll->customer_id)->first();
+        $service = Service::where('id',$enroll->service_ids)->first();
+
+        if ($customer && $service) {
+            $customer_name = $customer->customer_name;
+            $service_name = $service->service_name;
+            $renewl_date = $enroll->renewl_date;
+            $purchase_date = $enroll->purchase_date;
+            $renewl_cost = $enroll->renewl_cost;
+
+            $logo = asset('images/logo/' . $logoPath);
+
+
+            $smsParams = [
+                'sms_status' => 2, // Status for this message type, adjust as needed
+                'customer_name' => $customer_name,
+                'customer_number' => $customer->customer_number,
+                'service_name' => $service_name,
+                'purchase_date' => $purchase_date,
+                'renewl_date' => $renewl_date,
+                'renewl_cost' => $renewl_cost,
+                'company' => $company,
+                'url'=>$url,
+                'notes'=>$notes,
+            ];
+
+            // Get the SMS content
+            $smsContent = get_sms($smsParams);
+            // Send the WhatsApp message using sms_module function
+            sms_module($customer->customer_number, $smsContent);
+
+
+            Mail::to($customer->customer_email)->send(new renewlemail(  $customer_name,
+            $logo,
+            $company,  // company first
+            $service_name,  // then service name
+            $purchase_date,
+            $renewl_cost,
+            $renewl_date,));
+        }
+
+        return response()->json([ 'status' => 1]);
+
+
+
+
+    }
+
+    public function add_renewl2(Request $request){
+
+
+        $id=$request->input('renewl_id');
+        $enroll= Enrollment::where('id', $id)->first();
+        $url= $enroll->system_urls;
+        $notes=$enroll->notes;
+
+        $history = new ReneHistory();
+
+        $history->sub_id= $id;
+        $history->old_renewl_date= $request->input('renewl_date');
+        $history->new_renewl_date= $request->input('new_renewl_date');
+        $history->renewl_cost= $request->input('renewl_cost');
+        $history->notes= $request->input('notes');
+        $history->save();
+
+        $enroll->renewl_cost= $request->input('renewl_cost');
+        $enroll->renewl_date= $request->input('new_renewl_date');
+        $enroll->save();
+
+
+
+        $setting= Setting::first();
+        $company= $setting->company_name;
+
+
+        $logoPath= $setting->logo;
+        $phone= $setting->company_phone;
+        $customer = Customer::where('id',$enroll->customer_id)->first();
+        $service = Service::where('id',$enroll->service_ids)->first();
+
+        if ($customer && $service) {
+            $customer_name = $customer->customer_name;
+            $service_name = $service->service_name;
+            $renewl_date = $enroll->renewl_date;
+            $purchase_date = $enroll->purchase_date;
+            $renewl_cost = $enroll->renewl_cost;
+
+            $logo = asset('images/logo/' . $logoPath);
+
+
+            $smsParams = [
+                'sms_status' => 2, // Status for this message type, adjust as needed
+                'customer_name' => $customer_name,
+                'customer_number' => $customer->customer_number,
+                'service_name' => $service_name,
+                'purchase_date' => $purchase_date,
+                'renewl_date' => $renewl_date,
+                'renewl_cost' => $renewl_cost,
+                'company' => $company,
+                'url'=>$url,
+                'notes'=>$notes
+            ];
+
+            // Get the SMS content
+            $smsContent = get_sms($smsParams);
+
+            // Send the WhatsApp message using sms_module function
+            sms_module($customer->customer_number, $smsContent);
+
+
+            Mail::to($customer->customer_email)->send(new renewlemail(  $customer_name,
+            $logo,
+            $company,  // company first
+            $service_name,  // then service name
+            $purchase_date,
+            $renewl_cost,
+            $renewl_date,));
+        }
 
         return response()->json([ 'status' => 1]);
 

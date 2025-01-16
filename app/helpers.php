@@ -55,6 +55,7 @@ function get_sms($params)
     $company= "";
     $notes="";
     $sms_status="";
+    $url= "";
 
 
     $sms_text = Sms::where('sms_status', $params['sms_status'])->first();
@@ -67,6 +68,25 @@ function get_sms($params)
         $renewl_cost= $params['renewl_cost'];
         $service_name= $params['service_name'];
         $company= $params['company'];
+        $url= $params['url'];
+        $notes= $params['notes'];
+
+
+
+    }
+    if($params['sms_status']==2)
+    {
+
+        $customer_name = $params['customer_name'];
+        $purchase_date = $params['purchase_date'];
+        $renewl_date= $params['renewl_date'];
+        $renewl_cost= $params['renewl_cost'];
+        $service_name= $params['service_name'];
+        $company= $params['company'];
+        $url= $params['url'];
+        $notes= $params['notes'];
+
+
 
     }
 
@@ -79,6 +99,10 @@ function get_sms($params)
         'renewl_cost' => $renewl_cost,
         'purchase_date' => $purchase_date,
         'company' => $company,
+        'url' => $url,
+        'notes' => $notes,
+
+
 
 
     ];

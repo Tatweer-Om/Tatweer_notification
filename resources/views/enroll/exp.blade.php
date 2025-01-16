@@ -63,7 +63,7 @@
         </div> <!-- container-fluid -->
     </div>
 
-    <div class="modal fade" id="add_renewl_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal fade" id="add_renewl_modal2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -71,7 +71,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="#" class="add_renewl" method="POST">
+                    <form action="#" class="add_renewl2" method="POST">
                         @csrf
                         <input type="hidden" class="renewl_id" name="renewl_id" id="renewl_id" hidden>
                         <div class="row">
@@ -148,5 +148,8 @@
                 </div>
         </div>
     </div>
+
+
+
     @include('layouts.footer')
 @endsection

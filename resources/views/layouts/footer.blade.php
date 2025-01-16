@@ -221,26 +221,8 @@
 @endphp
 
 
-@if ($controllerName == 'category')
-    {{-- Include the JavaScript file for adding category --}}
-    @include('custom_js.add_category_js')
-@elseif ($controllerName == 'brand')
-    {{-- Include the JavaScript file for adding brand --}}
-    @include('custom_js.add_brand_js')
-@elseif ($controllerName == 'size')
-    {{-- Include the JavaScript file for adding size --}}
-    @include('custom_js.add_size_js')
-@elseif ($controllerName == 'color')
-    @include('custom_js.add_color_js')
-@elseif ($controllerName == 'dress')
-    @include('custom_js.add_dress_js')
-@elseif ($controllerName == 'booking')
-    @include('custom_js.add_booking_js')
-@elseif ($controllerName == 'view_booking')
-    @include('custom_js.view_booking_js')
-@elseif ($controllerName == 'edit_booking')
-    @include('custom_js.add_booking_js')
-@elseif ($controllerName == 'account')
+
+    @if ($controllerName == 'account')
     @include('custom_js.add_account_js')
 @elseif ($controllerName == 'expense_category')
     @include('custom_js.add_expensecat_js')
@@ -255,34 +237,17 @@
 @elseif ($controllerName == 'customer_profile')
     @include('custom_js.customer_js')
 
-@elseif ($controllerName == 'maint_dress_all')
-    @include('custom_js.add_dress_js')
-@elseif ($controllerName == 'dress_profile')
-    @include('custom_js.add_dress_js')
+
 @elseif ($controllerName == 'setting')
     @include('custom_js.setting_js')
-    @elseif ($controllerName == 'student')
-    @include('custom_js.student_js')
-    @elseif ($controllerName == 'teacher')
-    @include('custom_js.teacher_js')
+
     @elseif ($controllerName == 'course')
     @include('custom_js.course_js')
     @elseif ($controllerName == 'offer')
     @include('custom_js.offer_js')
     @elseif ($controllerName == 'enrol')
     @include('custom_js.enroll_js')
-    @elseif ($controllerName == 'course_profile')
-    @include('custom_js.course_js')
-    @elseif ($controllerName == 'teacher_profile')
-    @include('custom_js.teacher_js')
-    @elseif ($controllerName == 'student_profile')
-    @include('custom_js.student_js')
-    @elseif ($controllerName == 'income_report')
-    @include('custom_js.report_js')
-    @elseif ($controllerName == 'course_income_report')
-    @include('custom_js.report_js')
-    @elseif ($controllerName == 'all_courses_income')
-    @include('custom_js.report_js')
+
     @elseif ($controllerName == 'service')
     @include('custom_js.service_js')
     @elseif ($controllerName == 'customer')

@@ -1,23 +1,15 @@
 <script>
     $(document).ready(function() {
 
-        $('#all_subscription_exp').DataTable({
-            "sAjaxSource": "{{ url('show_subscription_exp') }}",
-            "bFilter": true,
-            "pagingType": "numbers",
-            "ordering": true,
-            "order": [[7, "desc"]],
-        });
-
-        $('#add_renewl_modal').on('submit', function(e) {
+        $('#add_renewl_modal2').on('submit', function(e) {
             e.preventDefault();
 
-            var formdatas = new FormData($('.add_renewl')[0]);
+            var formdatas = new FormData($('.add_renewl2')[0]);
             var date = $('.new_renewl_date').val();
 
             // Check if the service or student is not selected
             if (date === "") {
-                show_notification('error', @lang('messages.add_new_renewl_date_lang'));
+                show_notification('error',  '<?php echo trans('messages.add_renewl_date_lang',[],session('locale')); ?>');
                 return false;
             }
 
@@ -29,7 +21,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "{{ url('add_renewl') }}",
+                url: "{{ url('add_renewl2') }}",
                 data: formdatas,
                 contentType: false,
                 processData: false,
@@ -41,23 +33,23 @@
                     after_submit();
 
                     if (data.status == 1) {
-                        show_notification('success', @lang('messages.data_add_success_lang'));
-                        $('#add_renewl_modal').modal('hide');
+                        show_notification('success',  '<?php echo trans('messages.data_added_success_lang',[],session('locale')); ?>');
+                        $('#add_renewl_modal2').modal('hide');
                         $('#all_subscription_exp').DataTable().ajax.reload();
                     } else {
-                        show_notification('error', data.message || @lang('messages.data_add_failed_lang'));
+                        show_notification('error',  '<?php echo trans('messages.get_data_failed_lang',[],session('locale')); ?>');
                         $('#all_subscription_exp').DataTable().ajax.reload();
                     }
                 },
                 error: function(data) {
                     $('#global-loader').hide();
                     after_submit();
-                    show_notification('error', @lang('messages.data_add_failed_lang'));
+                    show_notification('error',  '<?php echo trans('messages.get_data_failed_lang',[],session('locale')); ?>');
                 }
             });
         });
 
-        $('#add_renewl_modal').on('show.bs.modal', function (event) {
+        $('#add_renewl_modal2').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget); // Button that triggered the modal
             var value1 = button.data('value1'); // Extract value1
             var value2 = button.data('value2'); // Extract value2
@@ -73,4 +65,7 @@
         });
 
     });
+
+
+
     </script>

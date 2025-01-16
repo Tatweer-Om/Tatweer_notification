@@ -33,130 +33,6 @@
             }
         });
 
-        $('.add_customer').off().on('submit', function(e){
-            e.preventDefault();
-            var formdatas = new FormData($('.add_customer')[0]);
-            var title=$('.customer_name').val();
-            var number=$('.customer_number').val();
-
-            var id=$('.customer_id').val();
-
-
-                if(title=="" )
-                {
-                    show_notification('error','<?php echo trans('messages.add_customer_name_lang',[],session('locale')); ?>'); return false;
-
-                }
-
-                if(number=="" )
-                {
-                    show_notification('error','<?php echo trans('messages.add_customer_phone_lang',[],session('locale')); ?>'); return false;
-                }
-
-                $('#global-loader').show();
-                before_submit();
-                var str = $(".add_customer").serialize();
-                $.ajax({
-                    type: "POST",
-                    url: "{{ url('add_customer2') }}",
-                    data: formdatas,
-                    contentType: false,
-                    processData: false,
-                    success: function(data) {
-                        $('#global-loader').hide();
-                        after_submit();
-                        if (data.status == 3) {
-                        show_notification('error', '<?php echo trans('messages.customer_number_or_contact_exist_lang', [], session('locale')); ?>');
-                        return false;
-                        }
-
-                        else if(data.status==1)
-                        {
-                            show_notification('success','<?php echo trans('messages.data_add_success_lang',[],session('locale')); ?>');
-                            $('#add_customer_modal').modal('hide');
-
-                            $(".add_customer")[0].reset();
-                            location.reload();
-
-                            return false;
-                        }
-                    },
-                    error: function(data)
-                    {
-                        $('#global-loader').hide();
-                        after_submit();
-                        show_notification('error','<?php echo trans('messages.data_add_failed_lang',[],session('locale')); ?>');
-                        console.log(data);
-                        return false;
-                    }
-                });
-
-
-
-        });
-
-        $('.add_service').off().on('submit', function(e){
-               e.preventDefault();
-               var formdatas = new FormData($('.add_service')[0]);
-               var title=$('.service_name').val();
-               var cost=$('.service_cost').val();
-
-               var id=$('.service_id').val();
-
-
-
-
-
-                   if(title=="" )
-                   {
-                       show_notification('error','<?php echo trans('messages.add_service_name_lang',[],session('locale')); ?>'); return false;
-
-                   }
-
-                   if(cost=="" )
-                   {
-                       show_notification('error','<?php echo trans('messages.add_service_cost_lang',[],session('locale')); ?>'); return false;
-                   }
-                   $('#global-loader').show();
-                   before_submit();
-                   var str = $(".add_service").serialize();
-                   $.ajax({
-                       type: "POST",
-                       url: "{{ url('add_service2') }}",
-                       data: formdatas,
-                       contentType: false,
-                       processData: false,
-                       success: function(data) {
-                           $('#global-loader').hide();
-                           after_submit();
-                           if (data.status == 3) {
-                           show_notification('error', '<?php echo trans('messages.service_number_or_contact_exist_lang', [], session('locale')); ?>');
-                           return false;
-                           }
-
-                           else if(data.status==1)
-                           {
-                               show_notification('success','<?php echo trans('messages.data_add_success_lang',[],session('locale')); ?>');
-                               $('#add_service_modal').modal('hide');
-                               location.reload();
-                               $(".add_service")[0].reset();
-
-                               return false;
-                           }
-                       },
-                       error: function(data)
-                       {
-                           $('#global-loader').hide();
-                           after_submit();
-                           show_notification('error','<?php echo trans('messages.data_add_failed_lang',[],session('locale')); ?>');
-                           console.log(data);
-                           return false;
-                       }
-                   });
-
-
-
-           });
 
 
         $('.subscription_list').off().on('submit', function(e) {
@@ -286,24 +162,166 @@
     document.addEventListener('DOMContentLoaded', function () {
     // Initialize Choices for service_id
     const serviceElement = document.getElementById('service_id');
+    let serviceChoices; // Declare variable to store Choices instance
+
     if (serviceElement) {
-        new Choices(serviceElement, {
+        serviceChoices = new Choices(serviceElement, {
             searchEnabled: true,
             itemSelectText: '',
         });
     }
 
-    // Initialize Choices for customer_id
-    const customerElement = document.getElementById('customer_id'); // Fixed ID
-    if (customerElement) {
-        new Choices(customerElement, {
-            searchEnabled: true,
-            itemSelectText: '',
+
+
+    // Handle form submission for adding a service
+    $('.add_service2').off().on('submit', function (e) {
+        e.preventDefault();
+
+        var formdatas = new FormData($('.add_service2')[0]);
+        var title = $('.service_name').val();
+        var cost = $('.service_cost2').val();
+
+        if (title === "") {
+            show_notification('error', 'Please enter a service name.');
+            return false;
+        }
+
+        if (cost === "") {
+            show_notification('error', 'Please enter a service cost.');
+            return false;
+        }
+
+        $('#global-loader').show();
+        before_submit();
+
+        $.ajax({
+            type: "POST",
+            url: "{{ url('add_service2') }}",
+            data: formdatas,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                $('#global-loader').hide();
+                after_submit();
+
+                if (data.status === 1) {
+                    show_notification('success', 'Service added successfully!');
+
+                    // Add the new service to the Choices.js select box
+                    if (serviceChoices) {
+                        serviceChoices.setChoices(
+                            [
+                                {
+                                    value: data.service.id,
+                                    label: data.service.service_name,
+                                    selected: true, // Mark as selected
+                                },
+                            ],
+                            'value',
+                            'label',
+                            true // Reset the Choices instance
+                        );
+                    }
+
+                    // Hide the modal and reset the form
+                    $('#add_service_modal2').modal('hide');
+                    $(".add_service2")[0].reset();
+                } else {
+                    show_notification('error', 'Failed to add the service.');
+                }
+            },
+            error: function (xhr, status, error) {
+                $('#global-loader').hide();
+                after_submit();
+                show_notification('error', 'An error occurred. Please try again.');
+                console.error(error);
+            }
         });
-    }
+    });
 });
 
 
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Initialize Choices for customer_id
+    const customerElement = document.getElementById('customer_id');
+    let customerChoices;
+
+    if (customerElement) {
+        customerChoices = new Choices(customerElement, {
+            searchEnabled: true,
+            itemSelectText: '',
+        });
+    }
+
+    // Handle customer form submission
+    $('.add_customer').off().on('submit', function (e) {
+        e.preventDefault();
+
+        var formdatas = new FormData($('.add_customer')[0]);
+        var title = $('.customer_name').val();
+        var number = $('.customer_number').val();
+
+        if (title === "") {
+            show_notification('error', '<?php echo trans('messages.add_customer_name_lang', [], session('locale')); ?>');
+            return false;
+        }
+
+        if (number === "") {
+            show_notification('error', '<?php echo trans('messages.add_customer_phone_lang', [], session('locale')); ?>');
+            return false;
+        }
+
+        $('#global-loader').show();
+        before_submit();
+
+        $.ajax({
+            type: "POST",
+            url: "{{ url('add_customer2') }}",
+            data: formdatas,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                $('#global-loader').hide();
+                after_submit();
+
+                if (data.status == 3) {
+                    show_notification('error', '<?php echo trans('messages.customer_number_or_contact_exist_lang', [], session('locale')); ?>');
+                    return false;
+                } else if (data.status == 1) {
+                    show_notification('success', '<?php echo trans('messages.data_add_success_lang', [], session('locale')); ?>');
+                    $('#add_customer_modal').modal('hide');
+                    $(".add_customer")[0].reset();
+
+                    // Add the new customer to the Choices.js select box
+                    if (customerChoices) {
+                        customerChoices.setChoices(
+                            [
+                                {
+                                    value: data.customer_id,
+                                    label: data.customer_name, // Adjust this based on your API response
+                                    selected: true, // Automatically select the newly added customer
+                                },
+                            ],
+                            'value',
+                            'label',
+                            true // Reset Choices instance
+                        );
+                    }
+
+                    return false;
+                }
+            },
+            error: function (data) {
+                $('#global-loader').hide();
+                after_submit();
+                show_notification('error', '<?php echo trans('messages.data_add_failed_lang', [], session('locale')); ?>');
+                console.log(data);
+                return false;
+            }
+        });
+    });
+});
 
 
 

@@ -51,39 +51,18 @@
     $(".renewl_cost").click(function () {
         $(".sms_area").val((index, value) => value + '{renewl_cost}');
     });
-
-
-
-    $(".teacher_number").click(function () {
-        $(".sms_area").val((index, value) => value + '{teacher_number}');
+    $(".url").click(function () {
+        $(".sms_area").val((index, value) => value + '{url}');
     });
 
-    $(".course_name").click(function () {
-        $(".sms_area").val((index, value) => value + '{course_name}');
-    });
 
     $(".status").click(function () {
         $(".sms_area").val((index, value) => value + '{status}');
     });
 
-    $(".serial_no").click(function () {
-        $(".sms_area").val((index, value) => value + '{serial_no}');
-    });
 
-    $(".receipt_date").click(function () {
-        $(".sms_area").val((index, value) => value + '{receipt_date}');
-    });
     $(".notes").click(function () {
         $(".sms_area").val((index, value) => value + '{notes}');
-    });
-    $(".offer_name").click(function () {
-        $(".sms_area").val((index, value) => value + '{offer_name}');
-    });
-    $(".start_date").click(function () {
-        $(".sms_area").val((index, value) => value + '{start_date}');
-    });
-    $(".end_date").click(function () {
-        $(".sms_area").val((index, value) => value + '{end_date}');
     });
 
 
